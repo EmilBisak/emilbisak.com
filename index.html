@@ -15,7 +15,7 @@
     <meta name="keywords"
         content="Emil Bisak, senior frontend engineer, frontend developer serbia, react developer, typescript developer, next.js, react serbia, javascript developer">
     <meta name="author" content="Emil Bisak">
-    <meta name="theme-color" content="#070b10">
+    <meta name="theme-color" content="#060709">
     <link rel="canonical" href="https://emilbisak.com/">
 
     <!-- Open Graph -->
@@ -26,7 +26,7 @@
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content="Emil Bisak, Senior Frontend Engineer. React, TypeScript, real-time and data-heavy UIs." />
-    <meta property="og:url" content="https://emilbisak.com" />
+    <meta property="og:url" content="https://emilbisak.com/" />
     <meta property="og:description"
         content="Senior Frontend Engineer building scalable React + TypeScript applications across SaaS and iGaming products." />
 
@@ -47,11 +47,16 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Manrope:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600&family=Inter:wght@400;500;600&family=Instrument+Serif:ital@1&family=JetBrains+Mono:wght@400;500&display=swap"
         rel="stylesheet">
 
     <link rel="stylesheet" href="style.css">
     <script>document.documentElement.classList.add("js");</script>
+
+    <script type="importmap">
+    { "imports": { "three": "./vendor/three.module.min.js" } }
+    </script>
+    <link rel="modulepreload" href="vendor/three.module.min.js">
 
     <script type="application/ld+json">
     {
@@ -115,14 +120,23 @@
 
     <a class="skip-link" href="#main">Skip to content</a>
 
+    <!-- Fixed backdrop: WebGL form + atmosphere -->
+    <div class="backdrop" aria-hidden="true">
+        <div class="atmo atmo-1"></div>
+        <div class="atmo atmo-2"></div>
+        <canvas class="stage" data-stage></canvas>
+        <div class="orb-fallback"></div>
+        <div class="grain"></div>
+    </div>
+
     <header class="site-header" data-header>
         <nav class="nav container" aria-label="Primary">
             <a href="#top" class="logo" aria-label="Emil Bisak, back to top">
-                <img class="logo-mark" src="assets/favicon.svg" alt="" width="36" height="36">
+                <img class="logo-mark" src="assets/favicon.svg" alt="" width="34" height="34">
                 <span class="logo-text">emilbisak<span class="accent">.com</span></span>
             </a>
 
-            <button class="nav-toggle" aria-expanded="false" aria-controls="nav-menu" data-nav-toggle>
+            <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-menu" data-nav-toggle>
                 <span class="sr-only">Toggle menu</span>
                 <span class="nav-toggle-bar"></span>
                 <span class="nav-toggle-bar"></span>
@@ -144,83 +158,56 @@
         </nav>
     </header>
 
+    <!-- Chapter indicator (desktop) -->
+    <div class="chapter-rail" aria-hidden="true" data-rail>
+        <span class="rail-num" data-rail-num>00</span>
+        <span class="rail-track"><span class="rail-fill" data-rail-fill></span></span>
+        <span class="rail-name" data-rail-name>Intro</span>
+    </div>
+
     <main id="main">
         <!-- HERO -->
-        <section class="hero" id="top">
-            <div class="hero-bg" aria-hidden="true">
-                <div class="grid-lines"></div>
-                <div class="glow glow-1"></div>
-                <div class="glow glow-2"></div>
-            </div>
-
+        <section class="hero" id="top" data-chapter="00" data-chapter-name="Intro">
             <div class="container hero-inner">
                 <div class="hero-copy">
-                    <p class="status reveal">
+                    <p class="status intro" style="--i:0">
                         <span class="status-dot"></span>
                         Open to new roles and projects
                     </p>
-                    <h1 class="hero-title reveal">
-                        Hi, I'm Emil.<br>
-                        I build <span class="gradient-text">fast, scalable</span> interfaces for the web.
+                    <h1 class="hero-title">
+                        <span class="line"><span class="intro" style="--i:1">Hi, I'm Emil.</span></span>
+                        <span class="line"><span class="intro" style="--i:2">I build <em class="serif">fast, scalable</em></span></span>
+                        <span class="line"><span class="intro" style="--i:3">interfaces for the web.</span></span>
                     </h1>
-                    <p class="hero-lead reveal">
+                    <p class="hero-lead intro" style="--i:4">
                         Senior Frontend Engineer with <strong>7+ years</strong> of experience crafting
                         React &amp; TypeScript applications across SaaS and iGaming products, from
                         real-time back-office tools to AI-powered invoicing.
                     </p>
-                    <p class="dim-line reveal"><span>2019 · · · today</span></p>
-                    <div class="hero-actions reveal">
-                        <a href="#contact" class="btn btn-primary">Let's work together</a>
-                        <a href="emilbisak_cv.pdf" class="btn btn-ghost" target="_blank" rel="noopener">
+                    <div class="hero-actions intro" style="--i:5">
+                        <a href="#contact" class="btn btn-primary" data-magnetic>
+                            Let's work together
+                            <svg class="icon"><use href="#i-arrow" /></svg>
+                        </a>
+                        <a href="emilbisak_cv.pdf" class="btn btn-ghost" target="_blank" rel="noopener" data-magnetic>
                             <svg class="icon"><use href="#i-download" /></svg>
                             Download CV
                         </a>
                     </div>
-                    <ul class="hero-social reveal" aria-label="Social links">
-                        <li><a href="https://github.com/EmilBisak" target="_blank" rel="noopener" aria-label="GitHub"><svg
-                                    class="icon"><use href="#i-github" /></svg></a></li>
-                        <li><a href="https://www.linkedin.com/in/emil-bisak/" target="_blank" rel="noopener"
-                                aria-label="LinkedIn"><svg class="icon"><use href="#i-linkedin" /></svg></a></li>
+                    <ul class="hero-social intro" style="--i:6" aria-label="Social links">
+                        <li><a href="https://github.com/EmilBisak" target="_blank" rel="noopener" aria-label="GitHub"><svg class="icon"><use href="#i-github" /></svg></a></li>
+                        <li><a href="https://www.linkedin.com/in/emil-bisak/" target="_blank" rel="noopener" aria-label="LinkedIn"><svg class="icon"><use href="#i-linkedin" /></svg></a></li>
                         <li><a href="mailto:bisak.emil@gmail.com" aria-label="Email"><svg class="icon"><use href="#i-mail" /></svg></a></li>
                         <li class="hero-location"><svg class="icon"><use href="#i-pin" /></svg> Pančevo, Serbia · Remote (CET)</li>
                     </ul>
                 </div>
-
-                <div class="hero-visual reveal" aria-hidden="true">
-                    <div class="editor">
-                        <div class="editor-bar">
-                            <span class="editor-fig">fig. 01</span>
-                            <span class="editor-file">LiveTable.tsx</span>
-                        </div>
-<pre class="editor-code"><code><span class="t-k">export function</span> <span class="t-f">LiveTable</span>({ <span class="t-v">feed</span> }: <span class="t-t">Props</span>) {
-  <span class="t-k">const</span> { <span class="t-v">data</span> } = <span class="t-f">useGetRowsQuery</span>();
-  <span class="t-k">const</span> <span class="t-v">rows</span> = <span class="t-f">useSocket</span>(<span class="t-v">feed</span>, <span class="t-v">data</span>);
-
-  <span class="t-k">return</span> (
-    &lt;<span class="t-t">Table</span>
-      <span class="t-a">rows</span>={<span class="t-v">rows</span>}
-      <span class="t-a">filters</span>={<span class="t-s">"smart"</span>}
-      <span class="t-a">virtualized</span>
-    /&gt;
-  );
-}</code><span class="caret"></span></pre>
-                    </div>
-                    <div class="float-card float-card-1">
-                        <span class="float-label">tsconfig</span>
-                        <span class="float-value">"strict": <small>true</small></span>
-                    </div>
-                    <div class="float-card float-card-2">
-                        <span class="pulse"></span>
-                        <span>WebSocket · live</span>
-                    </div>
-                </div>
             </div>
 
             <div class="container">
-                <dl class="stats reveal">
+                <dl class="stats intro" style="--i:7">
                     <div class="stat">
                         <dt>Years of experience</dt>
-                        <dd>7+</dd>
+                        <dd><span data-count="7">7</span>+</dd>
                     </div>
                     <div class="stat">
                         <dt>Product domains</dt>
@@ -235,35 +222,36 @@
                         <dd>Serbia · Iceland</dd>
                     </div>
                 </dl>
+                <a href="#about" class="scroll-cue intro" style="--i:8">
+                    <span class="scroll-line"></span>
+                    Scroll to explore
+                </a>
             </div>
         </section>
 
         <!-- ABOUT -->
-        <section class="section" id="about">
+        <section class="section" id="about" data-chapter="01" data-chapter-name="About">
             <div class="container about">
                 <div class="about-photo reveal">
                     <div class="photo-frame">
-                        <img src="assets/emil_bisak_portrait.jpg" alt="Portrait of Emil Bisak" width="700" height="700"
-                            loading="lazy">
+                        <img src="assets/emil_bisak_portrait.jpg" alt="Portrait of Emil Bisak" width="700" height="700" loading="lazy">
                     </div>
                 </div>
                 <div class="about-copy">
-                    <p class="eyebrow reveal">[01] About</p>
-                    <h2 class="section-title reveal">Engineering interfaces that stay fast as they grow.</h2>
-                    <div class="reveal">
-                        <p>
-                            I'm a senior frontend engineer with a strong focus on reusable architecture,
+                    <p class="chapter reveal"><span>01</span> About</p>
+                    <h2 class="section-title reveal-lines">
+                        <span class="line"><span>Engineering interfaces</span></span>
+                        <span class="line"><span>that stay <em class="serif">fast</em> as they grow.</span></span>
+                    </h2>
+                    <div class="prose reveal">
+                        <p>I'm a senior frontend engineer with a strong focus on reusable architecture,
                             performance optimization and data-heavy interfaces. I enjoy the hard parts of the
                             frontend: real-time workflows, complex state and component systems that the whole
-                            team can build on.
-                        </p>
-                        <p>
-                            I've spent years collaborating with product, design, backend and QA teams across
+                            team can build on.</p>
+                        <p>I've spent years collaborating with product, design, backend and QA teams across
                             Serbia and Iceland, and I care about clean, maintainable code, thoughtful code reviews
-                            and helping new teammates get up to speed.
-                        </p>
+                            and helping new teammates get up to speed.</p>
                     </div>
-
                     <ul class="strengths reveal">
                         <li>Performance optimization</li>
                         <li>Reusable component architecture</li>
@@ -276,12 +264,27 @@
             </div>
         </section>
 
+        <!-- STATEMENT (words light up while scrolling) -->
+        <section class="statement" id="approach" data-chapter="02" data-chapter-name="Approach">
+            <div class="statement-sticky">
+                <div class="container">
+                    <p class="chapter"><span>02</span> Approach</p>
+                    <p class="statement-text" data-words>Live data, complex state and forms that never end. I turn
+                        all of it into interfaces people can actually work with: predictable, consistent and quick
+                        to respond.</p>
+                </div>
+            </div>
+        </section>
+
         <!-- EXPERIENCE -->
-        <section class="section section-alt" id="experience">
+        <section class="section" id="experience" data-chapter="03" data-chapter-name="Experience">
             <div class="container">
                 <div class="section-head">
-                    <p class="eyebrow reveal">[02] Experience</p>
-                    <h2 class="section-title reveal">Where I've been building.</h2>
+                    <p class="chapter reveal"><span>03</span> Experience</p>
+                    <h2 class="section-title reveal-lines">
+                        <span class="line"><span>Where I've been</span></span>
+                        <span class="line"><span><em class="serif">building.</em></span></span>
+                    </h2>
                 </div>
 
                 <ol class="timeline">
@@ -290,11 +293,11 @@
                             <span class="job-date">Oct 2025 - Present</span>
                             <span class="badge badge-live">Current</span>
                         </div>
-                        <div class="job-card">
+                        <div class="job-card card">
                             <h3 class="job-title">Senior Frontend Engineer <span class="job-company">@ Freelance</span></h3>
                             <p class="job-summary">React + TypeScript admin panel for an iGaming platform, supporting
                                 back-office and operational workflows.</p>
-                            <ul class="job-points">
+                            <ul class="points">
                                 <li>Develop and maintain admin panel features across back-office and operational
                                     modules, including the <a href="#work">real-time tooling</a>.</li>
                                 <li>Work with product, design, backend and QA to ship stable, user-friendly internal
@@ -312,13 +315,11 @@
                             <span class="job-date">May 2019 - Mar 2025</span>
                             <span class="badge">~6 years</span>
                         </div>
-                        <div class="job-card">
-                            <h3 class="job-title">Frontend Developer <span class="job-company">@ <a
-                                        href="https://www.unimaze.com/" target="_blank" rel="noopener">Unimaze
-                                        Software</a></span></h3>
+                        <div class="job-card card">
+                            <h3 class="job-title">Frontend Developer <span class="job-company">@ <a href="https://www.unimaze.com/" target="_blank" rel="noopener">Unimaze Software</a></span></h3>
                             <p class="job-summary">React + TypeScript SaaS e-invoicing platform used in financial and
                                 accounting workflows.</p>
-                            <ul class="job-points">
+                            <ul class="points">
                                 <li>Shipped features across the product for nearly six years, built on modular,
                                     reusable UI components.</li>
                                 <li>Worked on the <strong>AI-powered invoice reader</strong>, the move from Redux to
@@ -328,8 +329,7 @@
                                     reviews, debugging, onboarding and mentoring.</li>
                             </ul>
                             <ul class="tags">
-                                <li>React</li><li>TypeScript</li><li>Redux</li><li>RTK Query</li><li>XSLT</li><li>Adaptive
-                                    Cards</li>
+                                <li>React</li><li>TypeScript</li><li>Redux</li><li>RTK Query</li><li>XSLT</li><li>Adaptive Cards</li>
                             </ul>
                         </div>
                     </li>
@@ -338,142 +338,151 @@
         </section>
 
         <!-- STACK -->
-        <section class="section" id="stack">
+        <section class="section" id="stack" data-chapter="04" data-chapter-name="Stack">
             <div class="container">
                 <div class="section-head">
-                    <p class="eyebrow reveal">[03] Tech stack</p>
-                    <h2 class="section-title reveal">Tools I reach for.</h2>
+                    <p class="chapter reveal"><span>04</span> Tech stack</p>
+                    <h2 class="section-title reveal-lines">
+                        <span class="line"><span>Tools I</span></span>
+                        <span class="line"><span><em class="serif">reach for.</em></span></span>
+                    </h2>
                 </div>
 
                 <div class="stack-grid">
-                    <article class="stack-card stack-card-wide reveal">
+                    <article class="stack-card card stack-card-wide reveal">
                         <h3>Core</h3>
                         <ul class="chips chips-lg">
                             <li>React</li><li>TypeScript</li><li>Next.js</li><li>JavaScript (ES6+)</li><li>HTML5</li><li>CSS3</li>
                         </ul>
                     </article>
-                    <article class="stack-card reveal">
+                    <article class="stack-card card reveal">
                         <h3>State &amp; data</h3>
-                        <ul class="chips">
-                            <li>Redux</li><li>RTK Query</li><li>Context API</li><li>REST APIs</li><li>WebSocket</li>
-                        </ul>
+                        <ul class="chips"><li>Redux</li><li>RTK Query</li><li>Context API</li><li>REST APIs</li><li>WebSocket</li></ul>
                     </article>
-                    <article class="stack-card reveal">
+                    <article class="stack-card card reveal">
                         <h3>Styling &amp; UI</h3>
-                        <ul class="chips">
-                            <li>Responsive design</li><li>Sass</li><li>Ant Design</li><li>Material UI</li><li>Bootstrap</li>
-                        </ul>
+                        <ul class="chips"><li>Responsive design</li><li>Sass</li><li>Ant Design</li><li>Material UI</li><li>Bootstrap</li></ul>
                     </article>
-                    <article class="stack-card reveal">
+                    <article class="stack-card card reveal">
                         <h3>Build &amp; tooling</h3>
-                        <ul class="chips">
-                            <li>Vite</li><li>Webpack</li><li>npm</li><li>Git</li><li>Bitbucket</li>
-                        </ul>
+                        <ul class="chips"><li>Vite</li><li>Webpack</li><li>npm</li><li>Git</li><li>Bitbucket</li></ul>
                     </article>
-                    <article class="stack-card reveal">
+                    <article class="stack-card card reveal">
                         <h3>Quality</h3>
-                        <ul class="chips">
-                            <li>Jest</li><li>Cross-browser testing</li><li>Code reviews</li>
-                        </ul>
+                        <ul class="chips"><li>Jest</li><li>Cross-browser testing</li><li>Code reviews</li></ul>
                     </article>
-                    <article class="stack-card reveal">
+                    <article class="stack-card card reveal">
                         <h3>Documents &amp; formats</h3>
-                        <ul class="chips">
-                            <li>JSON</li><li>XML</li><li>XSL / XSLT</li><li>Adaptive Cards</li>
-                        </ul>
+                        <ul class="chips"><li>JSON</li><li>XML</li><li>XSL / XSLT</li><li>Adaptive Cards</li></ul>
                     </article>
-                    <article class="stack-card reveal">
+                    <article class="stack-card card reveal">
                         <h3>Collaboration</h3>
-                        <ul class="chips">
-                            <li>Agile / Scrum</li><li>Jira</li><li>Figma</li>
-                        </ul>
+                        <ul class="chips"><li>Agile / Scrum</li><li>Jira</li><li>Figma</li></ul>
                     </article>
                 </div>
             </div>
         </section>
 
         <!-- WORK -->
-        <section class="section section-alt" id="work">
+        <section class="section" id="work" data-chapter="05" data-chapter-name="Selected work">
             <div class="container">
                 <div class="section-head section-head-row">
                     <div>
-                        <p class="eyebrow reveal">[04] Selected work</p>
-                        <h2 class="section-title reveal">Things I've built in production.</h2>
+                        <p class="chapter reveal"><span>05</span> Selected work</p>
+                        <h2 class="section-title reveal-lines">
+                            <span class="line"><span>Things I've built</span></span>
+                            <span class="line"><span>in <em class="serif">production.</em></span></span>
+                        </h2>
                     </div>
                     <p class="section-note reveal">Since 2019 my work has lived in private, client-owned codebases,
                         so there are no screenshots or repos here. I'm happy to walk through any of it in a
                         conversation.</p>
                 </div>
 
-                <div class="work-grid">
-                    <article class="work-card reveal">
-                        <p class="work-meta">Unimaze Software · SaaS e-invoicing</p>
-                        <h3>AI-powered invoice reader</h3>
-                        <p>Users upload an invoice and AI fills in the fields. The hard part was the workflow around
-                            it: automation people can still check and correct.</p>
-                        <ul class="job-points">
-                            <li>Built the invoice upload flow and the view of the data AI recognized.</li>
-                            <li>Let users review and manually correct any field before the invoice moves on to
-                                processing.</li>
-                            <li>Designed one clear flow that combines automatic extraction with manual checks for
-                                when recognition isn't accurate.</li>
-                        </ul>
-                        <ul class="tags"><li>React</li><li>TypeScript</li><li>AI feature UI</li></ul>
+                <div class="work-list">
+                    <article class="work-card card reveal">
+                        <span class="work-index">01</span>
+                        <div class="work-body">
+                            <p class="work-meta">Unimaze Software · SaaS e-invoicing</p>
+                            <h3>AI-powered invoice reader</h3>
+                            <p class="work-lead">Users upload an invoice and AI fills in the fields. The hard part was
+                                the workflow around it: automation people can still check and correct.</p>
+                            <ul class="points">
+                                <li>Built the invoice upload flow and the view of the data AI recognized.</li>
+                                <li>Let users review and manually correct any field before the invoice moves on to
+                                    processing.</li>
+                                <li>Designed one clear flow that combines automatic extraction with manual checks for
+                                    when recognition isn't accurate.</li>
+                            </ul>
+                            <ul class="tags"><li>React</li><li>TypeScript</li><li>AI feature UI</li></ul>
+                        </div>
                     </article>
 
-                    <article class="work-card reveal">
-                        <p class="work-meta">Freelance · iGaming back office</p>
-                        <h3>Real-time admin panel</h3>
-                        <p>Back-office and operational tools where data changes constantly and nobody should have
-                            to hit refresh.</p>
-                        <ul class="job-points">
-                            <li>Tables, filters, forms and management features across several admin modules.</li>
-                            <li>Live updates over WebSockets for data that has to stay current in real time.</li>
-                            <li>Tuned rendering, state handling and responsiveness for data-heavy views with frequent
-                                updates.</li>
-                            <li>Extended the shared component system with reusable components and common patterns,
-                                so modules stay consistent and easier to maintain.</li>
-                        </ul>
-                        <ul class="tags"><li>React</li><li>TypeScript</li><li>WebSocket</li><li>RTK Query</li></ul>
+                    <article class="work-card card reveal">
+                        <span class="work-index">02</span>
+                        <div class="work-body">
+                            <p class="work-meta">Freelance · iGaming back office</p>
+                            <h3>Real-time admin panel</h3>
+                            <p class="work-lead">Back-office and operational tools where data changes constantly and
+                                nobody should have to hit refresh.</p>
+                            <ul class="points">
+                                <li>Tables, filters, forms and management features across several admin modules.</li>
+                                <li>Live updates over WebSockets for data that has to stay current in real time.</li>
+                                <li>Tuned rendering, state handling and responsiveness for data-heavy views with
+                                    frequent updates.</li>
+                                <li>Extended the shared component system with reusable components and common
+                                    patterns, so modules stay consistent and easier to maintain.</li>
+                            </ul>
+                            <ul class="tags"><li>React</li><li>TypeScript</li><li>WebSocket</li><li>RTK Query</li></ul>
+                        </div>
                     </article>
 
-                    <article class="work-card reveal">
-                        <p class="work-meta">Unimaze Software · Frontend architecture</p>
-                        <h3>Redux to RTK Query migration</h3>
-                        <p>Make API communication and server data simpler and more consistent, without rewriting a
-                            running product.</p>
-                        <ul class="job-points">
-                            <li>Moved existing Redux flows to RTK Query step by step instead of in one big rewrite.
-                            </li>
-                            <li>Cut boilerplate and simplified data fetching and caching in the migrated parts.</li>
-                            <li>Modernized how the frontend talks to the APIs.</li>
-                        </ul>
-                        <ul class="tags"><li>Redux</li><li>RTK Query</li><li>REST APIs</li></ul>
+                    <article class="work-card card reveal">
+                        <span class="work-index">03</span>
+                        <div class="work-body">
+                            <p class="work-meta">Unimaze Software · Frontend architecture</p>
+                            <h3>Redux to RTK Query migration</h3>
+                            <p class="work-lead">Make API communication and server data simpler and more consistent,
+                                without rewriting a running product.</p>
+                            <ul class="points">
+                                <li>Moved existing Redux flows to RTK Query step by step instead of in one big
+                                    rewrite.</li>
+                                <li>Cut boilerplate and simplified data fetching and caching in the migrated parts.</li>
+                                <li>Modernized how the frontend talks to the APIs.</li>
+                            </ul>
+                            <ul class="tags"><li>Redux</li><li>RTK Query</li><li>REST APIs</li></ul>
+                        </div>
                     </article>
 
-                    <article class="work-card reveal">
-                        <p class="work-meta">Unimaze Software · Documents &amp; email</p>
-                        <h3>Invoice rendering and email templates</h3>
-                        <p>Generate invoices and emails from application data instead of hand-building every format
-                            as its own frontend feature.</p>
-                        <ul class="job-points">
-                            <li>XSLT stylesheets that render invoices dynamically and produce structured documents
-                                from invoice data.</li>
-                            <li>An email template system on Microsoft Adaptive Cards for dynamic transactional
-                                emails.</li>
-                        </ul>
-                        <ul class="tags"><li>XSLT</li><li>XML</li><li>Adaptive Cards</li></ul>
+                    <article class="work-card card reveal">
+                        <span class="work-index">04</span>
+                        <div class="work-body">
+                            <p class="work-meta">Unimaze Software · Documents &amp; email</p>
+                            <h3>Invoice rendering and email templates</h3>
+                            <p class="work-lead">Generate invoices and emails from application data instead of
+                                hand-building every format as its own frontend feature.</p>
+                            <ul class="points">
+                                <li>XSLT stylesheets that render invoices dynamically and produce structured documents
+                                    from invoice data.</li>
+                                <li>An email template system on Microsoft Adaptive Cards for dynamic transactional
+                                    emails.</li>
+                            </ul>
+                            <ul class="tags"><li>XSLT</li><li>XML</li><li>Adaptive Cards</li></ul>
+                        </div>
                     </article>
                 </div>
             </div>
         </section>
 
         <!-- EDUCATION & LANGUAGES -->
-        <section class="section" id="education">
+        <section class="section" id="education" data-chapter="06" data-chapter-name="Education">
             <div class="container edu-lang">
                 <div>
-                    <p class="eyebrow reveal">[05] Education</p>
-                    <h2 class="section-title reveal">Where I learned the craft.</h2>
+                    <p class="chapter reveal"><span>06</span> Education</p>
+                    <h2 class="section-title section-title-sm reveal-lines">
+                        <span class="line"><span>Where I learned</span></span>
+                        <span class="line"><span>the <em class="serif">craft.</em></span></span>
+                    </h2>
                     <p class="edu-note reveal">Largely self-taught. I learned frontend on my own and through intensive
                         courses, then went straight into production work in 2019.</p>
                     <ul class="edu-list">
@@ -502,73 +511,61 @@
                 </div>
 
                 <div>
-                    <p class="eyebrow reveal">[06] Languages</p>
-                    <h2 class="section-title reveal">Languages I speak.</h2>
+                    <p class="chapter reveal"><span>07</span> Languages</p>
+                    <h2 class="section-title section-title-sm reveal-lines">
+                        <span class="line"><span>Languages</span></span>
+                        <span class="line"><span>I <em class="serif">speak.</em></span></span>
+                    </h2>
                     <ul class="lang-list">
-                        <li class="reveal"><span>Serbian</span><span class="lang-level">Native</span><span class="meter"
-                                style="--v: 1"></span></li>
-                        <li class="reveal"><span>English</span><span class="lang-level">Professional</span><span
-                                class="meter" style="--v: .85"></span></li>
-                        <li class="reveal"><span>Slovak</span><span class="lang-level">Advanced</span><span
-                                class="meter" style="--v: .7"></span></li>
-                        <li class="reveal"><span>Hungarian</span><span class="lang-level">Beginner</span><span
-                                class="meter" style="--v: .25"></span></li>
+                        <li class="reveal"><span>Serbian</span><span class="lang-level">Native</span><span class="meter" style="--v: 1"></span></li>
+                        <li class="reveal"><span>English</span><span class="lang-level">Professional</span><span class="meter" style="--v: .85"></span></li>
+                        <li class="reveal"><span>Slovak</span><span class="lang-level">Advanced</span><span class="meter" style="--v: .7"></span></li>
+                        <li class="reveal"><span>Hungarian</span><span class="lang-level">Beginner</span><span class="meter" style="--v: .25"></span></li>
                     </ul>
                 </div>
             </div>
         </section>
 
         <!-- CONTACT -->
-        <section class="section contact" id="contact">
-            <div class="container">
-                <div class="contact-card reveal">
-                    <div class="contact-glow" aria-hidden="true"></div>
-                    <p class="eyebrow">[07] Contact</p>
-                    <h2 class="contact-title">Have a product that needs a <span class="gradient-text">great
-                            frontend</span>?</h2>
-                    <p class="contact-lead">Whether it's a freelance project or a full-time role, drop me a line and
-                        I'll get back to you soon.</p>
+        <section class="contact" id="contact" data-chapter="08" data-chapter-name="Contact">
+            <div class="container contact-inner">
+                <p class="chapter reveal"><span>08</span> Contact</p>
+                <h2 class="contact-title reveal-lines">
+                    <span class="line"><span>Have a product that</span></span>
+                    <span class="line"><span>needs a <em class="serif">great frontend?</em></span></span>
+                </h2>
+                <p class="contact-lead reveal">Whether it's a freelance project or a full-time role, drop me a line
+                    and I'll get back to you soon.</p>
 
-                    <div class="contact-email">
-                        <a href="mailto:bisak.emil@gmail.com" class="btn btn-primary btn-lg">
-                            <svg class="icon"><use href="#i-mail" /></svg>
-                            bisak.emil@gmail.com
-                        </a>
-                        <button class="btn btn-ghost btn-lg" type="button" data-copy="bisak.emil@gmail.com">
-                            <svg class="icon"><use href="#i-copy" /></svg>
-                            <span data-copy-label>Copy email</span>
-                        </button>
-                    </div>
-
-                    <ul class="contact-links">
-                        <li><a href="https://www.linkedin.com/in/emil-bisak/" target="_blank" rel="noopener"><svg
-                                    class="icon"><use href="#i-linkedin" /></svg> linkedin.com/in/emil-bisak</a></li>
-                        <li><a href="https://github.com/EmilBisak" target="_blank" rel="noopener"><svg
-                                    class="icon"><use href="#i-github" /></svg> github.com/emilbisak</a></li>
-                        <li><a href="tel:+381642049122"><svg class="icon"><use href="#i-phone" /></svg> +381 64 204
-                                9122</a></li>
-                    </ul>
+                <div class="contact-email reveal">
+                    <a href="mailto:bisak.emil@gmail.com" class="btn btn-primary btn-lg" data-magnetic>
+                        <svg class="icon"><use href="#i-mail" /></svg>
+                        bisak.emil@gmail.com
+                    </a>
+                    <button class="btn btn-ghost btn-lg" type="button" data-copy="bisak.emil@gmail.com" data-magnetic>
+                        <svg class="icon"><use href="#i-copy" /></svg>
+                        <span data-copy-label aria-live="polite">Copy email</span>
+                    </button>
                 </div>
+
+                <ul class="contact-links reveal">
+                    <li><a href="https://www.linkedin.com/in/emil-bisak/" target="_blank" rel="noopener"><svg class="icon"><use href="#i-linkedin" /></svg> linkedin.com/in/emil-bisak</a></li>
+                    <li><a href="https://github.com/EmilBisak" target="_blank" rel="noopener"><svg class="icon"><use href="#i-github" /></svg> github.com/emilbisak</a></li>
+                    <li><a href="tel:+381642049122"><svg class="icon"><use href="#i-phone" /></svg> +381 64 204 9122</a></li>
+                </ul>
             </div>
         </section>
     </main>
 
     <footer class="footer">
-        <div class="container">
-            <div class="title-block" aria-label="Drawing title block">
-                <div><span>Drawn by</span>Emil Bisak</div>
-                <div><span>Project</span>emilbisak.com</div>
-                <div><span>Rev</span><span class="tb-value" data-year></span></div>
-                <div><span>Scale</span>1:1</div>
-            </div>
-        </div>
         <div class="container footer-inner">
-            <p>&copy; 2019 - <span data-year-copy></span> Emil Bisak. Built by hand with HTML, CSS &amp; JS.</p>
+            <p>&copy; 2019 - <span data-year></span> Emil Bisak. Built by hand with HTML, CSS, JS &amp; WebGL.</p>
             <a href="#top" class="footer-top">Back to top ↑</a>
         </div>
     </footer>
 
     <script src="main.js"></script>
+    <script type="module" src="scene.js"></script>
 </body>
 
 </html>
