@@ -18,7 +18,7 @@
     })();
     if (!hasWebGL) root.classList.add("no-webgl");
 
-    // Shared with scene.js (the WebGL form)
+    // Shared with scene.js (the WebGL ribbon)
     const flow = (window.flow = {
         disabled: !hasWebGL,
         reduceMotion,
@@ -51,13 +51,23 @@
     const smooth = { target: window.scrollY, current: window.scrollY, running: false };
     const maxScroll = () => document.documentElement.scrollHeight - window.innerHeight;
 
-    function smoothLoop() {
-        smooth.current += (smooth.target - smooth.current) * 0.1;
+    // One step per frame. The WebGL ribbon calls this before it draws, so the
+    // page and the ribbon always move together in the same frame.
+    let lastStep = -1;
+    function stepScroll(now) {
+        if (!smooth.running || now === lastStep) return;
+        const dt = lastStep < 0 ? 16.7 : Math.min(now - lastStep, 50);
+        lastStep = now;
+        smooth.current += (smooth.target - smooth.current) * (1 - Math.exp(-dt * 0.0063));
         if (Math.abs(smooth.target - smooth.current) < 0.5) {
             smooth.current = smooth.target;
             smooth.running = false;
         }
         window.scrollTo(0, smooth.current);
+    }
+
+    function smoothLoop(now) {
+        stepScroll(now);
         if (smooth.running) requestAnimationFrame(smoothLoop);
     }
 
@@ -70,9 +80,11 @@
         if (!smooth.running) {
             smooth.current = window.scrollY;
             smooth.running = true;
+            lastStep = -1;
             requestAnimationFrame(smoothLoop);
         }
     }
+    flow.stepScroll = stepScroll;
 
     if (!reduceMotion) {
         window.addEventListener(
@@ -156,27 +168,7 @@
         revealObserver.observe(el);
     });
 
-    /* ---------- Statement: words light up with scroll ---------- */
-    const statement = document.querySelector("#approach");
-    const wordsEl = document.querySelector("[data-words]");
-    const keyWords = new Set(["data,", "state", "predictable,", "consistent", "quick"]);
-    let words = [];
-    if (wordsEl) {
-        const text = wordsEl.textContent.trim().split(/\s+/);
-        wordsEl.setAttribute("aria-label", text.join(" "));
-        wordsEl.textContent = "";
-        text.forEach((word, i) => {
-            const span = document.createElement("span");
-            span.className = keyWords.has(word) ? "w is-key" : "w";
-            span.textContent = word;
-            span.setAttribute("aria-hidden", "true");
-            wordsEl.append(span);
-            if (i < text.length - 1) wordsEl.append(" ");
-        });
-        words = [...wordsEl.querySelectorAll(".w")];
-    }
-
-    /* ---------- Scroll-driven state: header, story, rail, words ---------- */
+    /* ---------- Scroll-driven state: header and chapter rail ---------- */
     const header = document.querySelector("[data-header]");
     const chapters = [...document.querySelectorAll("[data-chapter]")];
     const rail = document.querySelector("[data-rail]");
@@ -194,11 +186,10 @@
 
         header.classList.toggle("is-scrolled", y > 12);
 
-        // Float chapter index from section centers (the form glides between keyframes)
+        // Float chapter index from section centers (drives the chapter rail)
         const centers = chapters.map((el) => {
             const r = el.getBoundingClientRect();
             const top = r.top + y;
-            // Tall sticky sections count from their middle third
             return top + Math.min(r.height, vh * 1.2) * 0.5;
         });
         let story = 0;
@@ -223,14 +214,6 @@
         }
         rail.classList.toggle("is-on", y > vh * 0.5);
         railFill.style.transform = `scaleY(${clamp(y / Math.max(1, maxScroll()), 0, 1)})`;
-
-        // Statement words
-        if (statement && words.length && !reduceMotion) {
-            const r = statement.getBoundingClientRect();
-            const p = clamp((-r.top + vh * 0.15) / Math.max(1, r.height - vh * 0.9), 0, 1);
-            const lit = Math.round(p * words.length * 1.1);
-            words.forEach((w, i) => w.classList.toggle("is-lit", i < lit));
-        }
     }
 
     const queue = () => {
@@ -244,6 +227,7 @@
 
     /* ---------- Pointer -> scene ---------- */
     window.addEventListener("pointermove", (e) => {
+        if (e.pointerType === "touch") return; // a finger dragging the page is not a hover
         flow.pointer.x = (e.clientX / window.innerWidth) * 2 - 1;
         flow.pointer.y = -(e.clientY / window.innerHeight) * 2 + 1;
         flow.pointer.active = true;
