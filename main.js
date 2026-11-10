@@ -135,6 +135,23 @@
     window.matchMedia("(min-width: 901px)").addEventListener("change", (e) => e.matches && setNavOpen(false));
 
     /* ---------- In-page links glide (and move focus) ---------- */
+    // Page position from layout alone (offsetTop ignores the reveal transforms)
+    const docTop = (el) => {
+        let y = 0;
+        for (let n = el; n; n = n.offsetParent) y += n.offsetTop;
+        return y;
+    };
+    // Where a section should land after a jump. Sections with a heading block are aimed at
+    // their heading, so the title ends up at the same spot on screen even when the heading
+    // sits lower in its section (Work centers it next to the code card).
+    const jumpTarget = (id, target) => {
+        if (id === "#top") return 0;
+        if (id === "#contact") return docTop(target);
+        const label = target.querySelector(".section-head .chapter");
+        if (!label) return docTop(target) - 70;
+        const pad = parseFloat(getComputedStyle(target).paddingTop) || 0;
+        return docTop(label) - pad - 70;
+    };
     document.addEventListener("click", (event) => {
         const link = event.target.closest('a[href^="#"]');
         if (!link) return;
@@ -143,7 +160,7 @@
         if (!target) return;
         event.preventDefault();
         setNavOpen(false);
-        const y = id === "#top" ? 0 : target.getBoundingClientRect().top + window.scrollY - (id === "#contact" ? 0 : 70);
+        const y = jumpTarget(id, target);
         ease = 0.0063;
         scrollToY(y);
         history.replaceState(null, "", id);
