@@ -47,16 +47,11 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Manrope:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Manrope:wght@400;500;600&family=Space+Grotesk:wght@500;600&display=swap"
         rel="stylesheet">
 
     <link rel="stylesheet" href="style.css">
     <script>document.documentElement.classList.add("js");</script>
-
-    <script type="importmap">
-    { "imports": { "three": "./vendor/three.module.min.js" } }
-    </script>
-    <link rel="modulepreload" href="vendor/three.module.min.js">
 
     <script type="application/ld+json">
     {
@@ -64,7 +59,7 @@
         "@type": "Person",
         "name": "Emil Bisak",
         "url": "https://emilbisak.com/",
-        "image": "https://emilbisak.com/assets/emil_bisak.jpg",
+        "image": "https://emilbisak.com/assets/emil_bisak_portrait.jpg",
         "jobTitle": "Senior Frontend Engineer",
         "email": "bisak.emil@gmail.com",
         "telephone": "+381-64-2049-122",
@@ -120,12 +115,12 @@
 
     <a class="skip-link" href="#main">Skip to content</a>
 
-    <!-- Fixed backdrop: WebGL form + atmosphere -->
+    <!-- Fixed backdrop: WebGL ribbon + atmosphere -->
     <div class="backdrop" aria-hidden="true">
         <div class="atmo atmo-1"></div>
         <div class="atmo atmo-2"></div>
         <canvas class="stage" data-stage></canvas>
-        <div class="orb-fallback"></div>
+        <div class="ribbon-fallback"></div>
         <div class="grain"></div>
     </div>
 
@@ -234,7 +229,10 @@
             <div class="container about">
                 <div class="about-photo reveal">
                     <div class="photo-frame">
-                        <img src="assets/emil_bisak_portrait.jpg" alt="Portrait of Emil Bisak" width="700" height="700" loading="lazy">
+                        <picture>
+                            <source srcset="assets/emil_bisak_portrait.webp" type="image/webp">
+                            <img src="assets/emil_bisak_portrait.jpg" alt="Portrait of Emil Bisak" width="560" height="700" loading="lazy" decoding="async">
+                        </picture>
                     </div>
                 </div>
                 <div class="about-copy">

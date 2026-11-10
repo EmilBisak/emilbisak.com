@@ -54,11 +54,12 @@
     // One step per frame. The WebGL ribbon calls this before it draws, so the
     // page and the ribbon always move together in the same frame.
     let lastStep = -1;
+    let ease = 0.0063; // per ms: a mouse wheel glides, a trackpad (already smooth) follows closely
     function stepScroll(now) {
         if (!smooth.running || now === lastStep) return;
-        const dt = lastStep < 0 ? 16.7 : Math.min(now - lastStep, 50);
+        const dt = lastStep < 0 ? 16.7 : Math.min(now - lastStep, 100);
         lastStep = now;
-        smooth.current += (smooth.target - smooth.current) * (1 - Math.exp(-dt * 0.0063));
+        smooth.current += (smooth.target - smooth.current) * (1 - Math.exp(-dt * ease));
         if (Math.abs(smooth.target - smooth.current) < 0.5) {
             smooth.current = smooth.target;
             smooth.running = false;
@@ -92,6 +93,10 @@
             (event) => {
                 if (event.ctrlKey || event.defaultPrevented) return;
                 event.preventDefault();
+                if (navMenu.classList.contains("is-open")) return; // the page stays put under an open menu
+                // Trackpads send many small deltas; a wheel notch is a big step
+                const trackpad = event.deltaMode === 0 && Math.abs(event.deltaY) < 50;
+                ease = trackpad ? 0.025 : 0.0063;
                 const delta = event.deltaMode === 1 ? event.deltaY * 16 : event.deltaMode === 2 ? event.deltaY * window.innerHeight : event.deltaY;
                 if (!smooth.running) smooth.target = window.scrollY;
                 scrollToY(smooth.target + delta);
@@ -115,11 +120,20 @@
     const setNavOpen = (open) => {
         navToggle.setAttribute("aria-expanded", String(open));
         navMenu.classList.toggle("is-open", open);
+        root.classList.toggle("nav-open", open); // locks page scrolling under the menu
     };
-    navToggle.addEventListener("click", () => setNavOpen(navToggle.getAttribute("aria-expanded") !== "true"));
+    const isNavOpen = () => navMenu.classList.contains("is-open");
+    navToggle.addEventListener("click", () => setNavOpen(!isNavOpen()));
     document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape") setNavOpen(false);
+        if (e.key !== "Escape" || !isNavOpen()) return;
+        setNavOpen(false);
+        navToggle.focus();
     });
+    // A tap or click anywhere outside the menu closes it
+    document.addEventListener("pointerdown", (e) => {
+        if (isNavOpen() && !navMenu.contains(e.target) && !navToggle.contains(e.target)) setNavOpen(false);
+    });
+    window.matchMedia("(min-width: 901px)").addEventListener("change", (e) => e.matches && setNavOpen(false));
 
     /* ---------- In-page links glide (and move focus) ---------- */
     document.addEventListener("click", (event) => {
@@ -131,47 +145,87 @@
         event.preventDefault();
         setNavOpen(false);
         const y = id === "#top" ? 0 : target.getBoundingClientRect().top + window.scrollY - (id === "#contact" ? 0 : 70);
+        ease = 0.0063;
         scrollToY(y);
         history.replaceState(null, "", id);
         if (!target.hasAttribute("tabindex")) target.setAttribute("tabindex", "-1");
         target.focus({ preventScroll: true });
     });
 
-    /* ---------- Active nav link ---------- */
+    /* ---------- Active nav link (from the scroll position, see update) ---------- */
     const navLinks = [...document.querySelectorAll("[data-nav-link]")];
-    const navObserver = new IntersectionObserver(
-        (entries) => {
-            entries.forEach((entry) => {
-                if (!entry.isIntersecting) return;
-                navLinks.forEach((l) => l.classList.toggle("is-active", l.getAttribute("href") === `#${entry.target.id}`));
-            });
-        },
-        { rootMargin: "-45% 0px -50% 0px" }
-    );
-    navLinks.map((l) => document.querySelector(l.getAttribute("href"))).filter(Boolean).forEach((s) => navObserver.observe(s));
+    let activeId = "";
+    function setActiveNav(id) {
+        if (id === activeId) return;
+        activeId = id;
+        navLinks.forEach((l) => {
+            const on = l.getAttribute("href") === `#${id}`;
+            l.classList.toggle("is-active", on);
+            if (on) l.setAttribute("aria-current", "true");
+            else l.removeAttribute("aria-current");
+        });
+    }
 
-    /* ---------- Reveals ---------- */
-    const revealObserver = new IntersectionObserver(
-        (entries) => {
-            entries.forEach((entry) => {
-                if (!entry.isIntersecting) return;
-                entry.target.classList.add("is-visible");
-                revealObserver.unobserve(entry.target);
-            });
-        },
-        { rootMargin: "0px 0px -8% 0px", threshold: 0.08 }
-    );
-    document.querySelectorAll(".reveal, .reveal-lines").forEach((el) => {
+    /* ---------- Reveals (checked on every scroll frame, see update) ---------- */
+    // A plain position check instead of an observer: content can never be left hidden after
+    // a jump, and it shows the moment it enters the screen
+    let pending = [...document.querySelectorAll(".reveal")];
+    pending.forEach((el) => {
         const siblings = [...el.parentElement.children].filter((c) => c.classList.contains("reveal"));
         const index = siblings.indexOf(el);
-        if (index > 0) el.style.setProperty("--delay", `${Math.min(index * 0.08, 0.4)}s`);
-        revealObserver.observe(el);
+        if (index > 0) el.style.setProperty("--delay", `${Math.min(index * 0.06, 0.24)}s`);
     });
+    function revealInView(vh) {
+        if (!pending.length) return;
+        pending = pending.filter((el) => {
+            const r = el.getBoundingClientRect();
+            if (r.top < vh * 0.92 && r.bottom > 0) {
+                el.classList.add("is-visible");
+                return false;
+            }
+            return true;
+        });
+    }
 
-    /* ---------- Scroll-driven state: header and chapter rail ---------- */
+    /* ---------- Card edges light up near the cursor ---------- */
+    const cards = finePointer ? [...document.querySelectorAll(".card")] : [];
+    const cursor = { x: -9999, y: -9999 };
+    let cardsQueued = false;
+    function lightCards() {
+        cardsQueued = false;
+        // Read every rect first, then write, so the browser lays out only once
+        const rects = cards.map((card) => card.getBoundingClientRect());
+        cards.forEach((card, i) => {
+            const r = rects[i];
+            if (r.bottom < -300 || r.top > window.innerHeight + 300) return;
+            card.style.setProperty("--mx", `${cursor.x - r.left}px`);
+            card.style.setProperty("--my", `${cursor.y - r.top}px`);
+        });
+    }
+    function queueCards() {
+        if (cardsQueued || !cards.length) return;
+        cardsQueued = true;
+        requestAnimationFrame(lightCards);
+    }
+    if (cards.length) {
+        window.addEventListener("pointermove", (e) => {
+            if (e.pointerType === "touch") return;
+            cursor.x = e.clientX;
+            cursor.y = e.clientY;
+            queueCards();
+        });
+        document.addEventListener("pointerleave", () => {
+            cursor.x = cursor.y = -9999;
+            queueCards();
+        });
+    }
+
+    /* ---------- Scroll-driven state: header, chapter rail, timeline ---------- */
     const header = document.querySelector("[data-header]");
     const chapters = [...document.querySelectorAll("[data-chapter]")];
     const rail = document.querySelector("[data-rail]");
+    const timeline = document.querySelector(".timeline");
+    const jobs = timeline ? [...timeline.querySelectorAll(".job")] : [];
     const railNum = document.querySelector("[data-rail-num]");
     const railName = document.querySelector("[data-rail-name]");
     const railFill = document.querySelector("[data-rail-fill]");
@@ -205,6 +259,13 @@
         }
         flow.story = story;
 
+        // Content and nav follow the same position
+        revealInView(vh);
+        let current = "";
+        for (const el of chapters) if (el.getBoundingClientRect().top <= vh * 0.4) current = el.id;
+        if (y + vh >= document.documentElement.scrollHeight - 2) current = chapters[chapters.length - 1].id;
+        setActiveNav(current);
+
         // Chapter rail
         const idx = clamp(Math.round(story), 0, chapters.length - 1);
         if (idx !== currentChapter) {
@@ -214,6 +275,17 @@
         }
         rail.classList.toggle("is-on", y > vh * 0.5);
         railFill.style.transform = `scaleY(${clamp(y / Math.max(1, maxScroll()), 0, 1)})`;
+
+        // Experience timeline: the line fills up to the middle of the screen
+        if (timeline) {
+            const r = timeline.getBoundingClientRect();
+            const dotY = parseFloat(getComputedStyle(timeline).getPropertyValue("--dot-y")) || 0;
+            const span = Math.max(1, r.height - dotY);
+            const reach = clamp(vh * 0.55 - (r.top + dotY), 0, span);
+            timeline.style.setProperty("--fill", (reach / span).toFixed(4));
+            jobs.forEach((job) => job.classList.toggle("is-passed", job.getBoundingClientRect().top - r.top <= reach + 1));
+        }
+        queueCards();
     }
 
     const queue = () => {
@@ -223,6 +295,7 @@
     };
     window.addEventListener("scroll", queue, { passive: true });
     window.addEventListener("resize", queue);
+    window.addEventListener("load", queue); // fonts and images can shift sections into view
     update();
 
     /* ---------- Pointer -> scene ---------- */
@@ -233,15 +306,6 @@
         flow.pointer.active = true;
     });
     document.addEventListener("pointerleave", () => (flow.pointer.active = false));
-
-    /* ---------- Cursor light on cards ---------- */
-    document.querySelectorAll(".card").forEach((card) => {
-        card.addEventListener("pointermove", (e) => {
-            const r = card.getBoundingClientRect();
-            card.style.setProperty("--mx", `${e.clientX - r.left}px`);
-            card.style.setProperty("--my", `${e.clientY - r.top}px`);
-        });
-    });
 
     /* ---------- Magnetic buttons ---------- */
     if (finePointer && !reduceMotion) {
