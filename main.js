@@ -368,6 +368,51 @@
         typeObserver.observe(codeCard);
     }
 
+    /* ---------- Code card: sways in 3D after the cursor ---------- */
+    // The card rests flat (style.css) and leans toward the cursor wherever it is on screen,
+    // eased so it drifts instead of snapping. Scrolling moves the card under a still cursor,
+    // so it rocks gently then too. --tx / --ty run from -1 to 1.
+    if (codeCard && finePointer && !reduceMotion && "IntersectionObserver" in window) {
+        const lean = { x: 0, y: 0 };
+        let swaying = false;
+        let lastT = 0;
+        const sway = (t) => {
+            if (!swaying) return;
+            requestAnimationFrame(sway);
+            const dt = Math.min((t - (lastT || t)) / 1000, 0.05);
+            lastT = t;
+            let tx = 0;
+            let ty = 0;
+            const p = flow.pointer;
+            if (p.active) {
+                const vw = window.innerWidth;
+                const vh = window.innerHeight;
+                const r = codeCard.getBoundingClientRect();
+                tx = clamp((((p.x + 1) / 2) * vw - (r.left + r.width / 2)) / (vw / 2), -1, 1);
+                ty = clamp((((1 - p.y) / 2) * vh - (r.top + r.height / 2)) / (vh / 2), -1, 1);
+            }
+            const k = 1 - Math.exp(-dt * 3.5);
+            const nx = lean.x + (tx - lean.x) * k;
+            const ny = lean.y + (ty - lean.y) * k;
+            // Skip style writes once it has settled
+            if (Math.abs(nx - lean.x) + Math.abs(ny - lean.y) < 0.0004) return;
+            lean.x = nx;
+            lean.y = ny;
+            codeCard.style.setProperty("--tx", nx.toFixed(4));
+            codeCard.style.setProperty("--ty", ny.toFixed(4));
+        };
+        new IntersectionObserver((entries) => {
+            const inView = entries.some((e) => e.isIntersecting);
+            if (inView && !swaying) {
+                swaying = true;
+                lastT = 0;
+                requestAnimationFrame(sway);
+            } else if (!inView) {
+                swaying = false;
+            }
+        }).observe(codeCard);
+    }
+
     /* ---------- Counters ---------- */
     function runCounters() {
         document.querySelectorAll("[data-count]").forEach((el) => {
