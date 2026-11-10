@@ -242,12 +242,14 @@ void main() {
 /* ---------- Ribbon keyframes, each anchored to the top of an element ---------- */
 // a: [x (-1 left .. 1 right), spread (share of width), blur (0 sharp .. 1 haze), alpha]
 // b: [twist, hue shift, meander (0 hold x .. 1 wander), focus drift]
-// The hero holds the ribbon beside the headline; after that it wanders freely behind everything,
-// sharp the whole way. Phones dim it a little behind text, since it crosses whole paragraphs there.
+// The hero holds the ribbon on the right, clear of the headline; from About on it wanders freely
+// behind everything, sharp the whole way. Phones dim it a little behind text, since it crosses
+// whole paragraphs there.
 const KEYS_WIDE = [
-    { at: "#top", a: [0.5, 0.2, 0.0, 1.0], b: [1.0, 0.0, 0.0, 0.0] },
-    { at: ".stats", a: [0.5, 0.2, 0.0, 0.95], b: [1.1, 0.08, 1.0, 0.0] },
-    { at: "#about", a: [0.0, 0.2, 0.0, 0.9], b: [1.2, 0.15, 1.0, 0.0] },
+    { at: "#top", a: [0.6, 0.2, 0.0, 1.0], b: [1.0, 0.0, 0.0, 0.0] },
+    { at: ".stats", a: [0.7, 0.2, 0.0, 0.95], b: [1.1, 0.08, 0.0, 0.0] },
+    // x only matters while the wander blends in, so it stays right instead of pulling left
+    { at: "#about", a: [0.6, 0.2, 0.0, 0.9], b: [1.2, 0.15, 1.0, 0.0] },
     { at: "#contact", a: [0.0, 0.22, 0.0, 1.0], b: [1.0, 0.05, 1.0, 0.0] },
 ];
 const KEYS_NARROW = [
@@ -468,27 +470,66 @@ function init() {
     };
 
     /* ---------- Adaptive quality ---------- */
+    // 2: full, 1: 1x resolution without sparks, 0: also half the strands. A short hitch
+    // (another busy app, a background task) must never cost sharpness for the whole visit, so
+    // a step down needs sustained slow frames, is undone when it did not help (a frame-rate
+    // cap such as battery saver, not the GPU), and is climbed back once frames are smooth again.
+    const fullRatio = pixelRatio;
+    const fullCount = ribbonCount;
+    // Golden-ratio lanes keep the ribbon full with half the strands
+    const halfCount = Math.floor(ribbonMesh.index.length / 2 / 6) * 6;
     let quality = 2;
     let frames = [];
     let windowMs = 0;
+    let slowWindows = 0;
+    let smoothWindows = 0;
+    let droppedAt = 0; // median that caused the last step down, until the next window judges it
+    let climbs = 0;
+    let settled = false;
+    const setQuality = (q) => {
+        quality = q;
+        F.quality = q;
+        showSparks = q === 2;
+        ribbonCount = q === 0 ? halfCount : fullCount;
+        const ratio = q === 2 ? fullRatio : 1;
+        if (ratio !== pixelRatio) {
+            pixelRatio = ratio;
+            resize();
+        }
+    };
     const watch = (ms) => {
-        if (quality === 0 || reduceMotion) return;
+        if (settled || reduceMotion) return;
         frames.push(ms);
         windowMs += ms;
         if (frames.length < 90 && (windowMs < 2000 || frames.length < 8)) return;
         const median = frames.sort((a, b) => a - b)[frames.length >> 1];
         frames = [];
         windowMs = 0;
-        if (median <= 24) return;
-        quality--;
-        F.quality = quality;
-        if (quality === 1) {
-            pixelRatio = 1;
-            showSparks = false;
-            resize();
+
+        if (droppedAt) {
+            const helped = median < droppedAt * 0.8;
+            droppedAt = 0;
+            if (!helped) {
+                setQuality(quality + 1);
+                settled = true;
+                return;
+            }
+        }
+
+        if (median > 24) {
+            smoothWindows = 0;
+            if (++slowWindows < 2 || quality === 0) return;
+            slowWindows = 0;
+            droppedAt = median;
+            setQuality(quality - 1);
+            // Slow again after climbing back: this is the level the device can hold
+            if (climbs > 0) settled = true;
         } else {
-            // Golden-ratio lanes keep the ribbon full with half the strands
-            ribbonCount = Math.floor(ribbonMesh.index.length / 2 / 6) * 6;
+            slowWindows = 0;
+            if (quality === 2 || median > 18 || ++smoothWindows < 3) return;
+            smoothWindows = 0;
+            climbs++;
+            setQuality(quality + 1);
         }
     };
 
@@ -527,6 +568,8 @@ function init() {
         last = performance.now();
         frames = [];
         windowMs = 0;
+        slowWindows = 0;
+        smoothWindows = 0;
     });
 
     const frame = (now) => {
