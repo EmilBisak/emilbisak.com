@@ -957,13 +957,20 @@ main {
     margin-top: 32px;
 }
 
-.strengths li {
-    padding: 8px 14px;
+/* Glass pills, like the cards: frosted, a soft top highlight, and the same edge light near the cursor */
+.strengths li.card {
+    padding: 8px 15px;
     border-radius: 99px;
-    border: 1px solid var(--line-2);
-    background: rgba(255, 255, 255, .03);
+    border-color: var(--line-2);
+    background: linear-gradient(180deg, rgba(255, 255, 255, .07), rgba(255, 255, 255, 0) 65%), var(--card);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .08), 0 10px 24px -14px rgba(0, 0, 0, .8);
     font-size: 14px;
     color: var(--text);
+}
+
+.strengths li.card:hover {
+    border-color: rgba(255, 255, 255, .26);
+    background: linear-gradient(180deg, rgba(255, 255, 255, .1), rgba(255, 255, 255, 0) 65%), var(--card-hover);
 }
 
 /* ---------- Experience ---------- */
@@ -1602,8 +1609,10 @@ main {
         font-size: 15.5px;
     }
 
+    /* The ribbon runs down the right side here, so the copy can start near the top */
     .hero {
-        padding-top: calc(var(--header-h) + 34vh);
+        min-height: 0;
+        padding-top: calc(var(--header-h) + clamp(32px, 7vh, 64px));
     }
 
     .hero-location {

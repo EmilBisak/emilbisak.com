@@ -184,7 +184,7 @@
                             Let's work together
                             <svg class="icon"><use href="#i-arrow" /></svg>
                         </a>
-                        <a href="emilbisak_cv.pdf" class="btn btn-ghost" target="_blank" rel="noopener" data-magnetic>
+                        <a href="emilbisak_cv.pdf" class="btn btn-ghost" download="Emil-Bisak-CV.pdf" data-magnetic>
                             <svg class="icon"><use href="#i-download" /></svg>
                             Download CV
                         </a>
@@ -248,12 +248,12 @@
                             and helping new teammates get up to speed.</p>
                     </div>
                     <ul class="strengths reveal">
-                        <li>Performance optimization</li>
-                        <li>Reusable component architecture</li>
-                        <li>Real-time &amp; data-heavy UIs</li>
-                        <li>Clean, maintainable code</li>
-                        <li>Cross-functional collaboration</li>
-                        <li>Mentoring &amp; code reviews</li>
+                        <li class="card">Performance optimization</li>
+                        <li class="card">Reusable component architecture</li>
+                        <li class="card">Real-time &amp; data-heavy UIs</li>
+                        <li class="card">Clean, maintainable code</li>
+                        <li class="card">Cross-functional collaboration</li>
+                        <li class="card">Mentoring &amp; code reviews</li>
                     </ul>
                 </div>
             </div>
@@ -297,11 +297,16 @@
                         </div>
                         <div class="job-card card">
                             <h3 class="job-title">Frontend Developer <span class="job-company">@ <a href="https://www.unimaze.com/" target="_blank" rel="noopener">Unimaze Software</a></span></h3>
-                            <p class="job-summary">React + TypeScript SaaS e-invoicing platform used in financial and
-                                accounting workflows.</p>
+                            <p class="job-summary">React + TypeScript web app for a cloud e-invoicing platform on the
+                                Peppol network, where finance and accounting teams send, receive, approve and track
+                                business documents.</p>
                             <ul class="points">
-                                <li>Shipped features across the product for nearly six years, built on modular,
-                                    reusable UI components.</li>
+                                <li>Built and maintained features across the whole platform for nearly six years:
+                                    sending and receiving invoices, orders, quotations and credit notes, multi-step
+                                    approval workflows, document tracking and reporting, business
+                                    relations and messaging on invoices.</li>
+                                <li>Worked on the supplier portal, where suppliers create e-invoices through validated
+                                    forms.</li>
                                 <li>Worked on the <strong>AI-powered invoice reader</strong>, the move from Redux to
                                     <strong>RTK Query</strong> and XSLT / Adaptive Cards document generation.
                                     <a href="#work">More in Selected work</a>.</li>
@@ -377,24 +382,6 @@
                     <article class="work-card card reveal">
                         <span class="work-index">01</span>
                         <div class="work-body">
-                            <p class="work-meta">Unimaze Software · SaaS e-invoicing</p>
-                            <h3>AI-powered invoice reader</h3>
-                            <p class="work-lead">Users upload an invoice and AI fills in the fields. The hard part was
-                                the workflow around it: automation people can still check and correct.</p>
-                            <ul class="points">
-                                <li>Built the invoice upload flow and the view of the data AI recognized.</li>
-                                <li>Let users review and manually correct any field before the invoice moves on to
-                                    processing.</li>
-                                <li>Designed one clear flow that combines automatic extraction with manual checks for
-                                    when recognition isn't accurate.</li>
-                            </ul>
-                            <ul class="tags"><li>React</li><li>TypeScript</li><li>AI feature UI</li></ul>
-                        </div>
-                    </article>
-
-                    <article class="work-card card reveal">
-                        <span class="work-index">02</span>
-                        <div class="work-body">
                             <p class="work-meta">Freelance · iGaming back office</p>
                             <h3>Real-time admin panel</h3>
                             <p class="work-lead">Back-office and operational tools where data changes constantly and
@@ -408,6 +395,24 @@
                                     patterns, so modules stay consistent and easier to maintain.</li>
                             </ul>
                             <ul class="tags"><li>React</li><li>TypeScript</li><li>WebSocket</li><li>RTK Query</li></ul>
+                        </div>
+                    </article>
+
+                    <article class="work-card card reveal">
+                        <span class="work-index">02</span>
+                        <div class="work-body">
+                            <p class="work-meta">Unimaze Software · SaaS e-invoicing</p>
+                            <h3>AI-powered invoice reader</h3>
+                            <p class="work-lead">Users upload an invoice and AI fills in the fields. The hard part was
+                                the workflow around it: automation people can still check and correct.</p>
+                            <ul class="points">
+                                <li>Built the invoice upload flow and the view of the data AI recognized.</li>
+                                <li>Let users review and manually correct any field before the invoice moves on to
+                                    processing.</li>
+                                <li>Designed one clear flow that combines automatic extraction with manual checks for
+                                    when recognition isn't accurate.</li>
+                            </ul>
+                            <ul class="tags"><li>React</li><li>TypeScript</li><li>AI feature UI</li></ul>
                         </div>
                     </article>
 
@@ -432,16 +437,50 @@
                         <span class="work-index">04</span>
                         <div class="work-body">
                             <p class="work-meta">Unimaze Software · Documents &amp; email</p>
-                            <h3>Invoice rendering and email templates</h3>
-                            <p class="work-lead">Generate invoices and emails from application data instead of
-                                hand-building every format as its own frontend feature.</p>
+                            <h3>Document rendering and email templates</h3>
+                            <p class="work-lead">Generate business documents and emails from application data instead
+                                of hand-building every format as its own frontend feature.</p>
                             <ul class="points">
-                                <li>XSLT stylesheets that render invoices dynamically and produce structured documents
-                                    from invoice data.</li>
+                                <li>XSLT stylesheets that dynamically render invoices and other business documents
+                                    from their data.</li>
                                 <li>An email template system on Microsoft Adaptive Cards for dynamic transactional
                                     emails.</li>
                             </ul>
                             <ul class="tags"><li>XSLT</li><li>XML</li><li>Adaptive Cards</li></ul>
+                        </div>
+                    </article>
+
+                    <article class="work-card card reveal">
+                        <span class="work-index">05</span>
+                        <div class="work-body">
+                            <p class="work-meta">Unimaze Software · Accounts payable</p>
+                            <h3>Invoice approval workflow</h3>
+                            <p class="work-lead">Incoming invoices have to reach the right people in the right order,
+                                and nobody should lose track of where one is waiting.</p>
+                            <ul class="points">
+                                <li>Multi-step approval chains, where each invoice moves on to the next approver once
+                                    the current step is done.</li>
+                                <li>Views for checking invoices against their purchase orders and handling the ones
+                                    that don't match.</li>
+                                <li>Reminders and notifications, so approvals don't get stuck.</li>
+                            </ul>
+                            <ul class="tags"><li>React</li><li>TypeScript</li><li>Workflow UI</li></ul>
+                        </div>
+                    </article>
+
+                    <article class="work-card card reveal">
+                        <span class="work-index">06</span>
+                        <div class="work-body">
+                            <p class="work-meta">Unimaze Software · Track and trace</p>
+                            <h3>Document tracking and reporting</h3>
+                            <p class="work-lead">One place to see where every sent and received document is, and how
+                                volumes change over time.</p>
+                            <ul class="points">
+                                <li>Dashboard of sent and received documents with their current status.</li>
+                                <li>Charts comparing document types over a chosen period.</li>
+                                <li>Export of invoice overviews to Excel.</li>
+                            </ul>
+                            <ul class="tags"><li>React</li><li>TypeScript</li><li>Data visualization</li></ul>
                         </div>
                     </article>
                 </div>

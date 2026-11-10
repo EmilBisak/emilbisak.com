@@ -22,7 +22,6 @@
     const flow = (window.flow = {
         disabled: !hasWebGL,
         reduceMotion,
-        story: 0, // float chapter index: 0 = hero, 1 = about, ...
         pointer: { x: 0, y: 0, active: false },
         ready: false,
         onReady() {
@@ -236,38 +235,20 @@
         queued = false;
         const y = window.scrollY;
         const vh = window.innerHeight || 1;
-        const mid = y + vh * 0.5;
 
         header.classList.toggle("is-scrolled", y > 12);
-
-        // Float chapter index from section centers (drives the chapter rail)
-        const centers = chapters.map((el) => {
-            const r = el.getBoundingClientRect();
-            const top = r.top + y;
-            return top + Math.min(r.height, vh * 1.2) * 0.5;
-        });
-        let story = 0;
-        if (mid <= centers[0]) story = 0;
-        else if (mid >= centers[centers.length - 1]) story = centers.length - 1;
-        else {
-            for (let i = 0; i < centers.length - 1; i++) {
-                if (mid < centers[i + 1]) {
-                    story = i + (mid - centers[i]) / Math.max(1, centers[i + 1] - centers[i]);
-                    break;
-                }
-            }
-        }
-        flow.story = story;
-
-        // Content and nav follow the same position
         revealInView(vh);
-        let current = "";
-        for (const el of chapters) if (el.getBoundingClientRect().top <= vh * 0.4) current = el.id;
-        if (y + vh >= document.documentElement.scrollHeight - 2) current = chapters[chapters.length - 1].id;
-        setActiveNav(current);
+
+        // Current chapter: the last section whose top has passed 40% of the screen
+        // (the last one once the page bottom is reached). Nav and chapter rail share it.
+        let idx = 0;
+        chapters.forEach((el, i) => {
+            if (el.getBoundingClientRect().top <= vh * 0.4) idx = i;
+        });
+        if (y + vh >= document.documentElement.scrollHeight - 2) idx = chapters.length - 1;
+        setActiveNav(chapters[idx].id);
 
         // Chapter rail
-        const idx = clamp(Math.round(story), 0, chapters.length - 1);
         if (idx !== currentChapter) {
             currentChapter = idx;
             railNum.textContent = chapters[idx].dataset.chapter;
