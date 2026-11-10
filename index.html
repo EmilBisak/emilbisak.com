@@ -175,9 +175,8 @@
                         <span class="line"><span class="intro" style="--i:3">interfaces for the web.</span></span>
                     </h1>
                     <p class="hero-lead intro" style="--i:4">
-                        Senior Frontend Engineer with <strong>7+ years</strong> of experience crafting
-                        React &amp; TypeScript applications across SaaS and iGaming products, from
-                        real-time back-office tools to AI-powered invoicing.
+                        Senior Frontend Engineer building data-heavy React applications, from real-time
+                        back-office tools to AI-powered invoicing.
                     </p>
                     <div class="hero-actions intro" style="--i:5">
                         <a href="#contact" class="btn btn-primary" data-magnetic>
@@ -275,17 +274,19 @@
                         </div>
                         <div class="job-card card">
                             <h3 class="job-title">Senior Frontend Engineer <span class="job-company">@ Freelance</span></h3>
-                            <p class="job-summary">React + TypeScript admin panel for an iGaming platform, supporting
-                                back-office and operational workflows.</p>
+                            <p class="job-summary">React + TypeScript admin panel for a multi-tenant online gaming and
+                                sports betting platform that serves multiple brands, regions and languages from a
+                                shared codebase.</p>
                             <ul class="points">
-                                <li>Develop and maintain admin panel features across back-office and operational
-                                    modules, including the <a href="#work">real-time tooling</a>.</li>
-                                <li>Work with product, design, backend and QA to ship stable, user-friendly internal
-                                    tools.</li>
-                                <li>Keep code quality up through code reviews, testing and modern frontend practices.</li>
+                                <li>Develop and maintain admin panel features across several modules, including the
+                                    <a href="#work">real-time tooling</a>.</li>
+                                <li>Build data-heavy views with tables, filters and forms that stay current through live
+                                    WebSocket updates.</li>
+                                <li>Work closely with product, design, backend and QA, and keep code quality up through
+                                    code reviews and manual testing.</li>
                             </ul>
                             <ul class="tags">
-                                <li>React</li><li>TypeScript</li><li>WebSocket</li><li>RTK Query</li><li>Vite</li>
+                                <li>React</li><li>TypeScript</li><li>Redux Toolkit</li><li>RTK Query</li><li>WebSocket</li><li>i18next</li><li>Vite</li>
                             </ul>
                         </div>
                     </li>
@@ -301,10 +302,10 @@
                                 Peppol network, where finance and accounting teams send, receive, approve and track
                                 business documents.</p>
                             <ul class="points">
-                                <li>Built and maintained features across the whole platform for nearly six years:
-                                    sending and receiving invoices, orders, quotations and credit notes, multi-step
-                                    approval workflows, document tracking and reporting, business
-                                    relations and messaging on invoices.</li>
+                                <li>Built and maintained features across the whole platform: sending and receiving
+                                    invoices, orders, quotations and credit notes, multi-step approval workflows,
+                                    document tracking and reporting, business relations and messaging on invoices,
+                                    with per-client settings and multiple languages.</li>
                                 <li>Worked on the supplier portal, where suppliers create e-invoices through validated
                                     forms.</li>
                                 <li>Worked on the <strong>AI-powered invoice reader</strong>, the move from Redux to
@@ -339,19 +340,19 @@
                     </article>
                     <article class="stack-card card reveal">
                         <h3>State &amp; data</h3>
-                        <ul class="chips"><li>Redux</li><li>RTK Query</li><li>Context API</li><li>REST APIs</li><li>WebSocket</li></ul>
+                        <ul class="chips"><li>Redux Toolkit</li><li>RTK Query</li><li>Context API</li><li>REST APIs</li><li>WebSocket</li></ul>
                     </article>
                     <article class="stack-card card reveal">
                         <h3>Styling &amp; UI</h3>
-                        <ul class="chips"><li>Responsive design</li><li>Sass</li><li>Ant Design</li><li>Material UI</li><li>Bootstrap</li></ul>
+                        <ul class="chips"><li>Responsive design</li><li>Sass</li><li>Ant Design</li><li>Material UI</li><li>Bootstrap</li><li>i18n (i18next, react-intl)</li></ul>
                     </article>
                     <article class="stack-card card reveal">
                         <h3>Build &amp; tooling</h3>
-                        <ul class="chips"><li>Vite</li><li>Webpack</li><li>npm</li><li>Git</li><li>Bitbucket</li></ul>
+                        <ul class="chips"><li>Vite</li><li>Webpack</li><li>npm</li><li>Git</li><li>GitLab</li><li>GitHub</li><li>Bitbucket</li><li>Claude Code</li><li>ChatGPT</li></ul>
                     </article>
                     <article class="stack-card card reveal">
                         <h3>Quality</h3>
-                        <ul class="chips"><li>Jest</li><li>Cross-browser testing</li><li>Code reviews</li></ul>
+                        <ul class="chips"><li>Jest</li><li>Cross-browser testing</li><li>Chrome DevTools</li><li>Lighthouse</li></ul>
                     </article>
                     <article class="stack-card card reveal">
                         <h3>Documents &amp; formats</h3>
@@ -359,7 +360,7 @@
                     </article>
                     <article class="stack-card card reveal">
                         <h3>Collaboration</h3>
-                        <ul class="chips"><li>Agile / Scrum</li><li>Jira</li><li>Figma</li></ul>
+                        <ul class="chips"><li>Agile / Scrum</li><li>Jira</li><li>ClickUp</li><li>Figma</li></ul>
                     </article>
                 </div>
             </div>
@@ -368,14 +369,44 @@
         <!-- WORK -->
         <section class="section" id="work" data-chapter="04" data-chapter-name="Selected work">
             <div class="container">
-                <div class="section-head section-head-row">
+                <div class="section-head section-head-row work-head">
                     <div>
                         <p class="chapter reveal"><span>04</span> Selected work</p>
                         <h2 class="section-title reveal">Things I've built in production.</h2>
+                        <p class="section-note reveal">Since 2019 my work has lived in private, client-owned codebases,
+                            so there are no screenshots or repos here. I'm happy to walk through any of it in a
+                            conversation.</p>
                     </div>
-                    <p class="section-note reveal">Since 2019 my work has lived in private, client-owned codebases,
-                        so there are no screenshots or repos here. I'm happy to walk through any of it in a
-                        conversation.</p>
+
+                    <!-- A small illustration of the kind of code behind the real-time admin panel -->
+                    <figure class="code-visual reveal" aria-hidden="true">
+                        <div class="editor card">
+                            <div class="editor-bar">
+                                <span class="editor-dots"><i></i><i></i><i></i></span>
+                                <span class="editor-file">LiveTable.tsx</span>
+                            </div>
+<pre class="editor-code"><code><span class="code-line" style="--l:0"><span class="t-k">export function</span> <span class="t-f">LiveTable</span>({ <span class="t-v">feed</span> }: <span class="t-t">Props</span>) {</span>
+<span class="code-line" style="--l:1">  <span class="t-k">const</span> { <span class="t-v">data</span> } = <span class="t-f">useGetRowsQuery</span>();</span>
+<span class="code-line" style="--l:2">  <span class="t-k">const</span> <span class="t-v">rows</span> = <span class="t-f">useSocket</span>(<span class="t-v">feed</span>, <span class="t-v">data</span>);</span>
+<span class="code-line" style="--l:3"> </span>
+<span class="code-line" style="--l:4">  <span class="t-k">return</span> (</span>
+<span class="code-line" style="--l:5">    &lt;<span class="t-t">Table</span></span>
+<span class="code-line" style="--l:6">      <span class="t-a">rows</span>={<span class="t-v">rows</span>}</span>
+<span class="code-line" style="--l:7">      <span class="t-a">filters</span>={<span class="t-s">"smart"</span>}</span>
+<span class="code-line" style="--l:8">      <span class="t-a">virtualized</span></span>
+<span class="code-line" style="--l:9">    /&gt;</span>
+<span class="code-line" style="--l:10">  );</span>
+<span class="code-line" style="--l:11">}<span class="caret"></span></span></code></pre>
+                        </div>
+                        <div class="float-chip float-chip-1">
+                            <span class="float-label">tsconfig</span>
+                            <span class="float-value">"strict": <b>true</b></span>
+                        </div>
+                        <div class="float-chip float-chip-2">
+                            <span class="status-dot"></span>
+                            WebSocket · live
+                        </div>
+                    </figure>
                 </div>
 
                 <div class="work-list">
@@ -393,8 +424,10 @@
                                     frequent updates.</li>
                                 <li>Extended the shared component system with reusable components and common
                                     patterns, so modules stay consistent and easier to maintain.</li>
+                                <li>Built for a multi-tenant platform: one codebase serving multiple brands, regions
+                                    and languages.</li>
                             </ul>
-                            <ul class="tags"><li>React</li><li>TypeScript</li><li>WebSocket</li><li>RTK Query</li></ul>
+                            <ul class="tags"><li>React</li><li>TypeScript</li><li>WebSocket</li><li>RTK Query</li><li>i18next</li></ul>
                         </div>
                     </article>
 

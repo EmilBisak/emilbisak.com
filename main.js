@@ -219,12 +219,10 @@
         });
     }
 
-    /* ---------- Scroll-driven state: header, chapter rail, timeline ---------- */
+    /* ---------- Scroll-driven state: header, nav, chapter rail ---------- */
     const header = document.querySelector("[data-header]");
     const chapters = [...document.querySelectorAll("[data-chapter]")];
     const rail = document.querySelector("[data-rail]");
-    const timeline = document.querySelector(".timeline");
-    const jobs = timeline ? [...timeline.querySelectorAll(".job")] : [];
     const railNum = document.querySelector("[data-rail-num]");
     const railName = document.querySelector("[data-rail-name]");
     const railFill = document.querySelector("[data-rail-fill]");
@@ -257,15 +255,6 @@
         rail.classList.toggle("is-on", y > vh * 0.5);
         railFill.style.transform = `scaleY(${clamp(y / Math.max(1, maxScroll()), 0, 1)})`;
 
-        // Experience timeline: the line fills up to the middle of the screen
-        if (timeline) {
-            const r = timeline.getBoundingClientRect();
-            const dotY = parseFloat(getComputedStyle(timeline).getPropertyValue("--dot-y")) || 0;
-            const span = Math.max(1, r.height - dotY);
-            const reach = clamp(vh * 0.55 - (r.top + dotY), 0, span);
-            timeline.style.setProperty("--fill", (reach / span).toFixed(4));
-            jobs.forEach((job) => job.classList.toggle("is-passed", job.getBoundingClientRect().top - r.top <= reach + 1));
-        }
         queueCards();
     }
 
@@ -299,6 +288,67 @@
             });
             el.addEventListener("pointerleave", () => (el.style.transform = ""));
         });
+    }
+
+    /* ---------- Code card: typed out behind the caret ---------- */
+    const codeCard = document.querySelector(".code-visual");
+    if (codeCard && !reduceMotion && "IntersectionObserver" in window) {
+        const code = codeCard.querySelector("code");
+        const caret = code.querySelector(".caret");
+        const chars = [];
+        // Wrap each character in its own span, remembering its line and whether it is indentation
+        let line = 0;
+        let atLineStart = true;
+        const walker = document.createTreeWalker(code, NodeFilter.SHOW_TEXT);
+        const texts = [];
+        while (walker.nextNode()) texts.push(walker.currentNode);
+        texts.forEach((node) => {
+            const frag = document.createDocumentFragment();
+            for (const ch of node.textContent) {
+                if (ch === "\n") {
+                    frag.append(ch);
+                    line++;
+                    atLineStart = true;
+                    continue;
+                }
+                const span = document.createElement("span");
+                span.className = "ch";
+                span.textContent = ch;
+                frag.append(span);
+                chars.push({ el: span, line, indent: atLineStart && ch === " " });
+                if (ch !== " ") atLineStart = false;
+            }
+            node.replaceWith(frag);
+        });
+        code.prepend(caret);
+        codeCard.classList.add("is-typing");
+
+        let i = 0;
+        const typeNext = () => {
+            // A line's indentation appears at once together with its first character,
+            // as if the editor added it
+            let ch;
+            do {
+                ch = chars[i++];
+                ch.el.classList.add("on");
+                ch.el.after(caret);
+            } while (ch.indent && i < chars.length && chars[i].line === ch.line);
+            if (i >= chars.length) {
+                codeCard.classList.remove("is-typing");
+                return;
+            }
+            const lineEnd = chars[i].line !== ch.line;
+            setTimeout(typeNext, lineEnd ? 100 + Math.random() * 80 : 12 + Math.random() * 24);
+        };
+        const typeObserver = new IntersectionObserver(
+            (entries) => {
+                if (!entries.some((e) => e.isIntersecting)) return;
+                typeObserver.disconnect();
+                setTimeout(typeNext, 450);
+            },
+            { threshold: 0.4 }
+        );
+        typeObserver.observe(codeCard);
     }
 
     /* ---------- Counters ---------- */

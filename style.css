@@ -973,79 +973,192 @@ main {
     background: linear-gradient(180deg, rgba(255, 255, 255, .1), rgba(255, 255, 255, 0) 65%), var(--card-hover);
 }
 
+/* ---------- Selected work: code illustration ---------- */
+.work-head .section-note {
+    margin-top: 22px;
+}
+
+.code-visual {
+    display: none;
+}
+
+@media (min-width: 1000px) {
+    .work-head {
+        align-items: center;
+    }
+
+    .code-visual {
+        position: relative;
+        display: block;
+        margin: 0;
+        padding: 26px 30px 30px 26px;
+    }
+}
+
+.editor {
+    border-color: var(--line-2);
+    background: linear-gradient(180deg, rgba(255, 255, 255, .05), rgba(255, 255, 255, 0) 40%), var(--card);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .06), 0 30px 60px -30px rgba(0, 0, 0, .9);
+}
+
+.editor-bar {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 13px 18px;
+    border-bottom: 1px solid var(--line);
+}
+
+.editor-dots {
+    display: flex;
+    gap: 6px;
+}
+
+.editor-dots i {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, .12);
+}
+
+.editor-file {
+    font-family: var(--f-mono);
+    font-size: 12.5px;
+    color: var(--dim);
+}
+
+.editor-code {
+    margin: 0;
+    padding: 22px 24px 26px;
+    overflow: hidden;
+    font-family: var(--f-mono);
+    font-size: 13.5px;
+    line-height: 1.8;
+    color: #c4cbd3;
+}
+
+.code-line {
+    display: inline-block;
+    min-width: 1ch;
+}
+
+/* Syntax colors drawn from the ribbon */
+.t-k { color: #4fd1e8; }
+.t-f { color: #eceff3; }
+.t-v { color: #b4bcc6; }
+.t-t { color: #b9b0ff; }
+.t-a { color: #84a6ff; }
+.t-s { color: #8ce6f4; }
+
+/* Zero-width anchor, so moving the caret through the text never shifts a character */
+.caret {
+    position: relative;
+    display: inline-block;
+    width: 0;
+    height: 1.15em;
+    vertical-align: text-bottom;
+}
+
+.caret::after {
+    content: "";
+    position: absolute;
+    left: 2px;
+    top: 0;
+    width: 8px;
+    height: 100%;
+    background: #4fd1e8;
+    animation: blink 1.1s steps(1) infinite;
+}
+
+/* While typing the caret stays solid, like a real editor */
+.code-visual.is-typing .caret::after {
+    animation: none;
+}
+
+@keyframes blink {
+    50% {
+        opacity: 0;
+    }
+}
+
+/* Typed out character by character (main.js); untyped characters keep their place */
+.code-visual.is-typing .ch:not(.on) {
+    visibility: hidden;
+}
+
+/* Small glass callouts floating off the corners */
+.float-chip {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 15px;
+    border-radius: 14px;
+    border: 1px solid var(--line-2);
+    background: linear-gradient(180deg, rgba(255, 255, 255, .08), rgba(255, 255, 255, 0) 70%), var(--card);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .08), 0 16px 30px -16px rgba(0, 0, 0, .9);
+    font-family: var(--f-mono);
+    font-size: 12.5px;
+    color: var(--muted);
+    animation: float 7s ease-in-out infinite;
+}
+
+.float-chip-1 {
+    top: 0;
+    right: 0;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+}
+
+.float-chip-2 {
+    bottom: 4px;
+    left: 0;
+    animation-delay: -3.5s;
+}
+
+.float-label {
+    font-size: 11px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--dim);
+}
+
+.float-value {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+}
+
+.float-value b {
+    font-weight: 500;
+    color: #4ade80;
+}
+
+@keyframes float {
+    50% {
+        transform: translateY(-6px);
+    }
+}
+
 /* ---------- Experience ---------- */
 .timeline {
-    --line-x: 5px;
-    --dot-y: 9px;
     position: relative;
     display: grid;
     gap: 28px;
-    padding-left: 28px;
-}
-
-/* A line of light that fills down the timeline as you scroll (main.js sets --fill) */
-.timeline::before,
-.timeline::after {
-    content: "";
-    position: absolute;
-    top: var(--dot-y);
-    bottom: 0;
-    left: var(--line-x);
-    width: 1px;
-    pointer-events: none;
-}
-
-.timeline::before {
-    background: linear-gradient(to bottom, var(--line-2), var(--line) 80%, transparent);
-}
-
-.timeline::after {
-    background: linear-gradient(to bottom, rgba(79, 209, 232, 0), #4fd1e8 30%, #5f8dff 75%, #e4f7ff);
-    box-shadow: 0 0 10px rgba(79, 209, 232, .55);
-    transform-origin: top;
-    transform: scaleY(var(--fill, 0));
 }
 
 .job {
-    position: relative;
     display: grid;
     gap: 14px;
 }
 
-/* A dot on the line for each role; it lights up once the line reaches it */
-.job::before {
-    content: "";
-    position: absolute;
-    top: calc(var(--dot-y) - 3.5px);
-    left: calc(var(--line-x) - 28px - 3.5px);
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    border: 1px solid var(--line-2);
-    background: var(--bg);
-    transition: background .4s, border-color .4s, box-shadow .4s;
-}
-
-.job.is-passed::before {
-    background: #8ce6f4;
-    border-color: #8ce6f4;
-    box-shadow: 0 0 10px rgba(79, 209, 232, .8);
-}
-
 @media (min-width: 900px) {
-    .timeline {
-        --line-x: 240px;
-        --dot-y: 40px;
-        padding-left: 0;
-    }
-
     .job {
         grid-template-columns: 220px 1fr;
         gap: 40px;
-    }
-
-    .job::before {
-        left: calc(var(--line-x) - 3.5px);
     }
 
     .job-meta {
