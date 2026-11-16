@@ -897,11 +897,13 @@ main {
     background: var(--bg-2);
 }
 
+/* A soft vignette inside the frame dims the bright leaves toward the edges, so the face stays
+   the brightest part of the photo */
 .photo-frame::after {
     content: "";
     position: absolute;
     inset: 0;
-    background: linear-gradient(180deg, transparent 55%, rgba(3, 3, 4, .55)), linear-gradient(120deg, rgba(95, 141, 255, .1), transparent 40%);
+    background: radial-gradient(ellipse 75% 65% at 50% 45%, transparent 35%, rgba(3, 3, 4, .55) 100%), linear-gradient(180deg, transparent 55%, rgba(3, 3, 4, .55)), linear-gradient(120deg, rgba(95, 141, 255, .1), transparent 40%);
     pointer-events: none;
 }
 
