@@ -413,6 +413,23 @@
         }).observe(codeCard);
     }
 
+    /* ---------- Portrait: fades into color on touch screens ---------- */
+    // With a mouse the photo turns color on hover (style.css). Touch screens have no hover, so
+    // there it fades into color once it is half on screen, and turns black and white again
+    // after it has left the screen, so the effect plays again next time.
+    const photoFrame = document.querySelector(".photo-frame");
+    if (photoFrame && !finePointer && "IntersectionObserver" in window) {
+        new IntersectionObserver(
+            (entries) => {
+                entries.forEach((e) => {
+                    if (e.intersectionRatio >= 0.5) photoFrame.classList.add("in-color");
+                    else if (!e.isIntersecting) photoFrame.classList.remove("in-color");
+                });
+            },
+            { threshold: [0, 0.5] }
+        ).observe(photoFrame);
+    }
+
     /* ---------- Counters ---------- */
     function runCounters() {
         document.querySelectorAll("[data-count]").forEach((el) => {

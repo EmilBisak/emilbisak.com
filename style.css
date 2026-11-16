@@ -883,9 +883,11 @@ main {
 }
 
 .about-photo {
-    max-width: 460px;
+    max-width: 380px;
 }
 
+/* A plain rounded photo with a thin edge. The ribbon runs right past it on most screens,
+   so a solid photo reads better than one that fades into the page. */
 .photo-frame {
     position: relative;
     aspect-ratio: 4 / 5;
@@ -913,14 +915,48 @@ main {
     height: 100%;
     object-fit: cover;
     object-position: center 22%;
-    filter: grayscale(.25) contrast(1.04);
+    /* Black and white at rest, color on hover, like the live site */
+    filter: grayscale(1) contrast(1) brightness(.95);
+    /* A touch of zoom so the face fills the frame; it stays put on hover */
     transform: scale(1.06);
-    transition: transform 1.2s var(--ease-out), filter .6s;
+    transition: filter .4s;
 }
 
+/* Color comes back muted, at about 80%, so it stays calm next to the ribbon */
 .about-photo:hover .photo-frame img {
-    transform: scale(1.02);
-    filter: none;
+    filter: grayscale(.2);
+}
+
+/* Touch screens: main.js adds .in-color once the photo is on screen. The color seeps in
+   more slowly than on hover, a moment after the photo appears, so the change is noticed. */
+.photo-frame.in-color img {
+    filter: grayscale(.2);
+    transition: filter 1.4s ease .3s;
+}
+
+/* Side by side, the photo grows to the height of the text next to it, from the chapter
+   label to the last strength. The image is taken out of the flow so only the text sets
+   that height, and it simply crops to whatever shape the frame ends up. */
+@media (min-width: 960px) {
+    .about {
+        align-items: stretch;
+    }
+
+    .about-photo {
+        display: flex;
+        max-width: 420px;
+    }
+
+    .photo-frame {
+        flex: 1;
+        aspect-ratio: auto;
+        min-height: 420px;
+    }
+
+    .photo-frame picture {
+        position: absolute;
+        inset: 0;
+    }
 }
 
 @media (max-width: 959px) {
