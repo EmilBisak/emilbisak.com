@@ -459,12 +459,13 @@ main {
     text-shadow: none;
 }
 
+/* Air between sections leaves room for the ribbon, but not so much that the page drags */
 .section {
-    padding: clamp(96px, 14vw, 180px) 0;
+    padding: clamp(80px, 10vw, 140px) 0;
 }
 
 .section-head {
-    margin-bottom: clamp(44px, 6vw, 80px);
+    margin-bottom: clamp(40px, 5vw, 64px);
 }
 
 .section-head-row {
@@ -600,6 +601,19 @@ main {
     margin-top: 30px;
     color: var(--muted);
     font-size: clamp(16px, 1.4vw, 18.5px);
+}
+
+/* Each half of the lead sentence keeps to its own line, so the second always starts with
+   "from". Phones let the sentence flow, to keep the hero short. */
+@media (min-width: 641px) {
+    .lead-line {
+        display: inline-block;
+    }
+}
+
+/* Keeps a hyphenated word like "real-time" on one line instead of splitting it at the hyphen */
+.nowrap {
+    white-space: nowrap;
 }
 
 .hero-actions {
@@ -1716,6 +1730,39 @@ main {
 /* Cards keep their own hover transitions once visible */
 .js .card.reveal.is-visible {
     transition: opacity .7s var(--ease-out) var(--delay, 0s), transform .7s var(--ease-out) var(--delay, 0s), border-color .35s, background .35s;
+}
+
+/* Glass can't blur what is behind it while one of its parents is still fading in (opacity
+   below 1), so a card inside a reveal showed the ribbon sharp until the fade ended, then
+   blurred all at once. Reveals that hold glass (job cards, the code card and its chips, the
+   Copy email button) only slide in; their children fade instead, each blurring the whole time. */
+@media (prefers-reduced-motion: no-preference) {
+    .js-ok .reveal:has(> .card, > .btn-ghost) {
+        opacity: 1;
+    }
+
+    .js-ok .reveal:has(> .card, > .btn-ghost):not(.is-visible) > * {
+        opacity: 0;
+    }
+
+    .js-ok .reveal.is-visible:has(> .card, > .btn-ghost) > * {
+        animation: reveal-fade .7s var(--ease-out) var(--delay, 0s) backwards;
+    }
+
+    /* The chips keep floating */
+    .js-ok .reveal.is-visible:has(> .card, > .btn-ghost) > .float-chip {
+        animation: reveal-fade .7s var(--ease-out) var(--delay, 0s) backwards, float 7s ease-in-out infinite;
+    }
+
+    .js-ok .reveal.is-visible:has(> .card, > .btn-ghost) > .float-chip-2 {
+        animation-delay: var(--delay, 0s), -3.5s;
+    }
+}
+
+@keyframes reveal-fade {
+    from {
+        opacity: 0;
+    }
 }
 
 /* Failsafe: if main.js never runs, show everything anyway */
