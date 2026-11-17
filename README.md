@@ -1,4 +1,4 @@
-# Emil Bisak: portfolio
+# Emil Bisak portfolio
 
 The visual edition of my portfolio, live at **https://emilbisak.com**.
 
