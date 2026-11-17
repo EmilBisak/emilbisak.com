@@ -8,6 +8,19 @@
     const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
     const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
 
+    /* ---------- Years of experience ---------- */
+    // Counted from the first production job on 1 May 2019, so the number goes up by itself
+    // every 1 May. The HTML holds the current value for crawlers and visitors without JavaScript.
+    const yearsOfExperience = (() => {
+        const now = new Date();
+        const years = now.getFullYear() - 2019;
+        return now.getMonth() < 4 ? years - 1 : years; // January to April: before this year's 1 May
+    })();
+    document.querySelectorAll("[data-years]").forEach((el) => {
+        el.textContent = String(yearsOfExperience);
+        if (el.dataset.count) el.dataset.count = String(yearsOfExperience); // the stat counts up to it
+    });
+
     const hasWebGL = (() => {
         try {
             const c = document.createElement("canvas");
