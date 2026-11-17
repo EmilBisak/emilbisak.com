@@ -621,14 +621,6 @@ main {
     font-size: clamp(16px, 1.4vw, 18.5px);
 }
 
-/* Each half of the lead sentence keeps to its own line, so the second always starts with
-   "from". Phones let the sentence flow, to keep the hero short. */
-@media (min-width: 641px) {
-    .lead-line {
-        display: inline-block;
-    }
-}
-
 /* Keeps a hyphenated word like "real-time" on one line instead of splitting it at the hyphen */
 .nowrap {
     white-space: nowrap;
