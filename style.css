@@ -1629,6 +1629,20 @@ main {
     color: var(--text);
 }
 
+/* The same portfolio in its blueprint design lives at e-b.dev */
+.footer-alt a {
+    color: var(--muted);
+    text-decoration: underline;
+    text-decoration-color: rgba(79, 209, 232, .5);
+    text-underline-offset: 3px;
+    transition: color .25s, text-decoration-color .25s;
+}
+
+.footer-alt a:hover {
+    color: var(--text);
+    text-decoration-color: var(--accent);
+}
+
 @media (pointer: coarse) {
     .contact-links a,
     .footer-top,
