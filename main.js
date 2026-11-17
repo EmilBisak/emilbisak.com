@@ -46,21 +46,17 @@
     });
     setTimeout(start, 3000);
 
-    /* ---------- Smooth wheel scroll ---------- */
-    // The page scrolls in step with the ribbon's frames: left to the browser, the page and the
-    // ribbon drift a frame apart and the diagonal strands seem to jump sideways. The wheel
-    // settles in about a quarter of a second, close to the browser's own wheel animation,
-    // so it still feels like normal scrolling. Touch and keys scroll natively.
-    const smooth = { target: window.scrollY, current: window.scrollY, running: false, link: false };
+    /* ---------- Glide for in-page links ---------- */
+    // Wheel, trackpad, scrollbar, keys and touch all scroll natively, exactly as on any other
+    // site: the ribbon's canvas scrolls with the page (scene.js), so it keeps up on its own.
+    // Only a click on an in-page link glides to its section.
+    const smooth = { target: window.scrollY, current: window.scrollY, running: false };
     const maxScroll = () => document.documentElement.scrollHeight - window.innerHeight;
-    const EASE_LINK = 0.0063; // per ms: an in-page link glides to its section
-    const EASE_WHEEL = 0.012; // a mouse wheel notch settles in about 250ms
-    const EASE_TRACKPAD = 0.03; // a trackpad is already smooth, so it follows closely
+    const ease = 0.0063; // per ms
 
     // One step per frame. The WebGL ribbon calls this before it draws, so the
     // page and the ribbon always move together in the same frame.
     let lastStep = -1;
-    let ease = EASE_LINK;
     function stepScroll(now) {
         if (!smooth.running || now === lastStep) return;
         const dt = lastStep < 0 ? 16.7 : Math.min(now - lastStep, 100);
@@ -93,30 +89,11 @@
     }
     flow.stepScroll = stepScroll;
 
-    if (!reduceMotion) {
-        window.addEventListener(
-            "wheel",
-            (event) => {
-                if (event.ctrlKey || event.defaultPrevented) return;
-                event.preventDefault();
-                if (navMenu.classList.contains("is-open")) return; // the page stays put under an open menu
-                // Trackpads send many small deltas; a wheel notch is a big step
-                const trackpad = event.deltaMode === 0 && Math.abs(event.deltaY) < 50;
-                ease = trackpad ? EASE_TRACKPAD : EASE_WHEEL;
-                const delta = event.deltaMode === 1 ? event.deltaY * 16 : event.deltaMode === 2 ? event.deltaY * window.innerHeight : event.deltaY;
-                // A wheel turn during a link glide takes over from where the page is now
-                if (!smooth.running || smooth.link) smooth.target = window.scrollY;
-                smooth.link = false;
-                scrollToY(smooth.target + delta);
-            },
-            { passive: false }
-        );
-    }
-
-    // Touch and scroll keys stop a link glide at once, so the reader takes over
+    // The reader takes over at once: any wheel, touch or scroll key stops a glide in progress
     const stopGlide = () => {
         smooth.running = false;
     };
+    window.addEventListener("wheel", stopGlide, { passive: true });
     window.addEventListener("touchstart", stopGlide, { passive: true });
     const scrollKeys = new Set(["ArrowUp", "ArrowDown", "PageUp", "PageDown", "Home", "End", " "]);
     window.addEventListener("keydown", (e) => scrollKeys.has(e.key) && stopGlide());
@@ -185,8 +162,6 @@
         event.preventDefault();
         setNavOpen(false);
         const y = jumpTarget(id, target);
-        ease = EASE_LINK;
-        smooth.link = true;
         scrollToY(y);
         history.replaceState(null, "", id);
         if (!target.hasAttribute("tabindex")) target.setAttribute("tabindex", "-1");

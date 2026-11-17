@@ -450,6 +450,17 @@ function init() {
         needsRender = true;
     };
 
+    // The canvas scrolls with the page (style.css) and is put back over the screen every frame.
+    // It reaches `over` px past the screen at the top and bottom, so on a frame where the page
+    // scrolled ahead of the drawing (scrollbar drag, keys, touch) the edges still show ribbon.
+    let viewH = window.innerHeight;
+    let over = 0;
+    const fitStage = () => {
+        viewH = window.innerHeight;
+        over = Math.round(Math.min(140, Math.max(64, viewH * 0.12)));
+        canvas.style.height = `${viewH + 2 * over}px`;
+    };
+
     const resize = () => {
         const w = canvas.clientWidth;
         const h = canvas.clientHeight;
@@ -459,8 +470,8 @@ function init() {
         // The ribbon's shape is measured in screen heights; only re-measure when the width
         // changes, so a mobile toolbar sliding in and out never reshapes it mid-scroll
         if (w !== S.resX || S.unit === 1) {
-            S.unit = h;
-            S.blend = Math.min(h * 0.45, 420);
+            S.unit = viewH;
+            S.blend = Math.min(viewH * 0.45, 420);
         }
         S.resX = w;
         S.resY = h;
@@ -581,7 +592,7 @@ function init() {
         if (F.stepScroll) F.stepScroll(now);
         if (lost) return;
         const scroll = window.scrollY;
-        const h = S.resY;
+        const h = viewH;
 
         if (reduceMotion) {
             // Still ribbon: only redraw when the page moves under it
@@ -602,8 +613,9 @@ function init() {
             ptr.y += (ty - ptr.y) * kp;
             const target = p.active ? 1 : 0;
             glow += (target - glow) * (1 - Math.exp(-dt * (target > glow ? 5 : 1.6)));
+            // The cursor is in screen space; the canvas starts `over` px above the screen
             S.pointer[0] = ptr.x;
-            S.pointer[1] = ptr.y;
+            S.pointer[1] = ptr.y + over;
             S.pointer[2] = glow;
         }
         lastScroll = scroll;
@@ -611,13 +623,18 @@ function init() {
         // Adapt quality before drawing: resizing clears the canvas, so never do it after a draw
         if (reveal >= 1) watch(ms);
 
-        S.scroll = scroll;
+        // Put the canvas back over the screen for this frame. The page position and the drawing
+        // reach the screen together, and between frames the canvas moves with the content.
+        const top = scroll - over;
+        canvas.style.transform = `translate3d(0, ${top}px, 0)`;
+
+        S.scroll = top;
         S.time = time;
         S.speed = speed01;
         S.pulse = pulse;
-        for (let i = 0; i < MAX_KEYS; i++) S.anchors[i] = i < anchorsDoc.length ? anchorsDoc[i] - scroll : 1e7;
+        for (let i = 0; i < MAX_KEYS; i++) S.anchors[i] = i < anchorsDoc.length ? anchorsDoc[i] - top : 1e7;
         const r = reveal * reveal * (3 - 2 * reveal);
-        S.reveal = -300 + r * (h * 1.3 + 600);
+        S.reveal = over + (-300 + r * (h * 1.3 + 600));
 
         draw();
         if (!reported) {
@@ -627,8 +644,11 @@ function init() {
     };
 
     new ResizeObserver(resize).observe(canvas);
+    // The canvas height follows the screen; the observer above then resizes the drawing buffer
+    window.addEventListener("resize", fitStage);
     // Section heights shift as fonts and images load
     new ResizeObserver(measure).observe(document.body);
+    fitStage();
     resize();
     requestAnimationFrame((t) => {
         last = t;

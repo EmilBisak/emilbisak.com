@@ -115,12 +115,20 @@
 
     <a class="skip-link" href="#main">Skip to content</a>
 
-    <!-- Fixed backdrop: WebGL ribbon + atmosphere -->
+    <!-- Fixed backdrop: atmosphere, and a CSS ribbon when WebGL is unavailable -->
     <div class="backdrop" aria-hidden="true">
         <div class="atmo atmo-1"></div>
         <div class="atmo atmo-2"></div>
-        <canvas class="stage" data-stage></canvas>
         <div class="ribbon-fallback"></div>
+    </div>
+
+    <!-- The WebGL ribbon scrolls with the page, so it moves together with the content -->
+    <div class="stage-layer" aria-hidden="true">
+        <canvas class="stage" data-stage></canvas>
+    </div>
+
+    <!-- Grain over the ribbon and the atmosphere -->
+    <div class="backdrop grain-layer" aria-hidden="true">
         <div class="grain"></div>
     </div>
 

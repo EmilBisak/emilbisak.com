@@ -156,11 +156,29 @@ strong {
     overflow: hidden;
 }
 
-.stage {
+/* The ribbon's canvas scrolls with the page instead of staying fixed, so the browser moves it in
+   the same step as the content, even when it scrolls on its own (scrollbar, keys, touch) and
+   gets a frame ahead of the drawing. scene.js puts it back over the screen every frame and
+   sizes it a little taller than the screen. The layer spans the page and clips the canvas, so
+   it never makes the page longer. */
+body {
+    position: relative;
+}
+
+.stage-layer {
     position: absolute;
     inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.stage {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
-    height: 100%;
+    height: 100vh;
     display: block;
 }
 
